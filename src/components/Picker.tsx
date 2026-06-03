@@ -11,10 +11,10 @@ const THEME_KEY = "jg-theme";
 const FONT_KEY = "jg-font";
 const LOGO_KEY = "jg-logo";
 const MODE_KEY = "jg-mode";
-const DISMISS_KEY = "jg-picker-dismissed";
 
 export function Picker() {
-  const [open, setOpen] = useState(false);
+  // Always open by default on every load; the visitor can collapse it.
+  const [open, setOpen] = useState(true);
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
   const [font, setFont] = useState<FontId>(DEFAULT_FONT);
   const [logo, setLogo] = useState<LogoId>(DEFAULT_LOGO);
@@ -26,22 +26,10 @@ export function Picker() {
     setLogo((localStorage.getItem(LOGO_KEY) as LogoId) || DEFAULT_LOGO);
     const m = localStorage.getItem(MODE_KEY);
     setMode(m === "light" || m === "dark" ? m : null);
-    // Open by default on first visit; stay closed once dismissed.
-    if (!localStorage.getItem(DISMISS_KEY)) setOpen(true);
   }, []);
 
-  // Any close is remembered so it doesn't reopen on every page.
-  function close() {
-    setOpen(false);
-    try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
-  }
-  function toggle() {
-    setOpen((o) => {
-      if (!o) return true;
-      try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
-      return false;
-    });
-  }
+  const close = () => setOpen(false);
+  const toggle = () => setOpen((o) => !o);
 
   const effectiveMode: ModeId = mode ?? naturalMode(theme);
 
