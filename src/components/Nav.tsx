@@ -47,7 +47,7 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/contact"
+            href="/contact#estimate"
             className="group hidden items-center gap-2 rounded-full bg-bg py-2 pl-4 pr-2 text-sm font-medium text-fg transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] sm:flex"
           >
             <span>Get an estimate</span>

@@ -32,9 +32,11 @@ export default function Contact() {
 
           <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             {/* FORM */}
-            <Reveal>
-              <ContactForm />
-            </Reveal>
+            <div id="estimate" className="scroll-mt-28">
+              <Reveal>
+                <ContactForm />
+              </Reveal>
+            </div>
 
             {/* SIDEBAR */}
             <Reveal delay={120} className="flex flex-col gap-6">
