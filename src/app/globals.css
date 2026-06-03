@@ -200,13 +200,15 @@ body {
 }
 
 /* Logo switching (driven by html[data-logo]) */
-.logo-block, .logo-blockinv, .logo-serif { display: none; }
+.logo-block, .logo-blockinv, .logo-serif, .logo-stone { display: none; }
 [data-logo="block"] .logo-wave { display: none; }
 [data-logo="block"] .logo-block { display: inline-block; }
 [data-logo="blockinv"] .logo-wave { display: none; }
 [data-logo="blockinv"] .logo-blockinv { display: inline-block; }
 [data-logo="serif"] .logo-wave { display: none; }
 [data-logo="serif"] .logo-serif { display: inline-block; }
+[data-logo="stone"] .logo-wave { display: none; }
+[data-logo="stone"] .logo-stone { display: inline-block; }
 
 /* Full-bleed: only active in the Mosaic theme */
 [data-theme="mosaic"] .bleed {

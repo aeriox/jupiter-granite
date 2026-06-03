@@ -67,6 +67,13 @@ export function Wordmark({
         alt="Jupiter Granite Co."
         className="logo-opt logo-serif h-10 w-auto"
       />
+
+      {/* Stone-textured wordmark image */}
+      <img
+        src={`/img/logos/stone-${variant}.png`}
+        alt="Jupiter Granite Co."
+        className="logo-opt logo-stone h-10 w-auto"
+      />
     </div>
   );
 }
