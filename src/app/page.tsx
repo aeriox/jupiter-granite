@@ -19,6 +19,8 @@ export default function Home() {
           src="/img/hero-waterfront-island.jpg"
           alt="Modern waterfront kitchen with a custom stone island by Jupiter Granite"
           fill priority sizes="100vw"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAFAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAeEAACAgAHAAAAAAAAAAAAAAAAAQIDBAUSFCEiQf/EABQBAQAAAAAAAAAAAAAAAAAAAAL/xAAVEQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEQMRAD8AjzPE7a6lxg5aue8m/QAClH//2Q=="
           className="object-cover object-center opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/30" />
@@ -26,21 +28,21 @@ export default function Home() {
 
         <Shell className="relative pb-16 pt-32 sm:pb-24">
           <div className="max-w-3xl">
-            <Reveal><Eyebrow onDark>Jupiter · Palm Beach · Treasure Coast</Eyebrow></Reveal>
-            <Reveal delay={80}>
+            <Reveal eager><Eyebrow onDark>Jupiter · Palm Beach · Treasure Coast</Eyebrow></Reveal>
+            <Reveal eager delay={80}>
               <h1 className="mt-6 font-display text-[clamp(2.75rem,8vw,6rem)] leading-[0.95] text-white">
                 Natural stone,<br />
                 <span className="font-display-italic text-accent">mastered.</span>
               </h1>
             </Reveal>
-            <Reveal delay={160}>
+            <Reveal eager delay={160}>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-white/75">
                 Three generations of craftsmen turning raw granite, quartzite and marble into the
                 surfaces your home is built around — fabricated on Florida&apos;s most advanced
                 stone machinery and guaranteed for life.
               </p>
             </Reveal>
-            <Reveal delay={240}>
+            <Reveal eager delay={240}>
               <div className="mt-9 flex flex-wrap items-center gap-3">
                 <CTA href="/contact">Get an estimate</CTA>
                 <Link href="/gallery" className="rounded-full border border-white/20 px-6 py-3 text-sm font-medium text-white/90 transition-colors duration-300 hover:bg-white/10">
@@ -51,7 +53,7 @@ export default function Home() {
           </div>
         </Shell>
 
-        <Reveal delay={320} className="absolute bottom-8 right-5 hidden rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-md lg:block">
+        <Reveal eager delay={320} className="absolute bottom-8 right-5 hidden rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-md lg:block">
           <div className="rounded-[calc(1rem-0.375rem)] bg-black/40 px-5 py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
             <div className="flex items-center gap-2">
               <span className="font-display text-2xl text-white">{site.rating}</span>

@@ -7,16 +7,19 @@ export function Reveal({
   delay = 0,
   className = "",
   as: Tag = "div",
+  eager = false,
 }: {
   children: React.ReactNode;
   delay?: number;
   className?: string;
   as?: React.ElementType;
+  eager?: boolean;
 }) {
   const ref = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
+    if (eager) return; // CSS animation handles it
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -30,7 +33,18 @@ export function Reveal({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [eager]);
+
+  if (eager) {
+    return (
+      <Tag
+        className={`reveal-eager ${className}`}
+        style={{ animationDelay: `${delay}ms` }}
+      >
+        {children}
+      </Tag>
+    );
+  }
 
   return (
     <Tag

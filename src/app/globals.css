@@ -232,8 +232,20 @@ body {
 }
 .reveal.in { opacity: 1; transform: translateY(0); filter: blur(0); }
 
+/* CSS-only reveal for above-the-fold content — plays immediately on paint,
+   no JS hydration required. animation-fill-mode: both keeps start state
+   before the delay fires and end state after. */
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(2rem); filter: blur(5px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+.reveal-eager {
+  animation: reveal-in 0.85s var(--ease-lux) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .reveal-eager { animation: none; }
   html { scroll-behavior: auto; }
   body { transition: none; }
 }
