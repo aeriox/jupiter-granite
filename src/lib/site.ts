@@ -3,7 +3,9 @@ export const site = {
   shortName: "Jupiter Granite",
   phone: "(561) 352-6232",
   phoneHref: "tel:+15613526232",
+  fax: "(561) 741-3924",
   email: "info@jupitergranite.com",
+  ownerEmail: "jason@jupitergranite.com",
   address: {
     street: "952 Jupiter Park Lane, Suite 2",
     city: "Jupiter",
@@ -20,46 +22,158 @@ export const site = {
   established: 2000,
   license: "U-21494",
   owner: "Jason Demick",
+  contacts: [
+    { name: "Marcos", role: "Showroom & estimating" },
+    { name: "Nikki", role: "Showroom & estimating" },
+    { name: "Jason Demick", role: "Owner & master craftsman", email: "jason@jupitergranite.com" },
+  ],
 } as const;
+
+/* ---------------- Navigation ---------------- */
+
+export const nav = [
+  { label: "Materials", href: "/materials" },
+  { label: "Services", href: "/services" },
+  { label: "Technology", href: "/technology" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "About", href: "/about" },
+] as const;
+
+/* ---------------- Materials ---------------- */
 
 export const materials = [
   {
-    name: "Quartzite",
+    slug: "granite",
+    name: "Granite",
+    tagline: "Endlessly varied, virtually indestructible.",
+    body: "Every slab is one of a kind, warm underhand and built to outlast the home around it. We fabricate and install lighter and darker granites for kitchens, baths, bars and outdoor living — all cut and finished in-house.",
+    img: "/img/mat-river-white.jpg",
+    swatches: ["/img/k-speckled.jpg", "/img/k-brown-veined.jpg", "/img/k-black-granite.jpg", "/img/k-blue-granite.jpg"],
+  },
+  {
+    slug: "marble",
+    name: "Marble",
+    tagline: "The world's most timeless stone finish.",
+    body: "Statuary, Carrera, Travertine, New Porto, Verde Atlantis, Breccia Oniciata, Rainforest Green, Emperador, Rojo Alicante and more. We mill and bookmatch on our CNC so nothing goes to waste — including the backsplash cut from a single remaining slab.",
+    img: "/img/mat-marble.jpg",
+    swatches: ["/img/mat-calacatta.jpg", "/img/backlit-marble.jpg", "/img/marble-moody.jpg", "/img/k-calacatta-waterfall.jpg"],
+  },
+  {
+    slug: "quartz",
+    name: "Fine Quartz",
+    tagline: "Engineered color without compromise.",
+    body: "The largest selection in the area — Cambria, Silestone, Caesarstone, Compac, HanStone, Zodiaq and more. Low maintenance, high durability, endless color. We're certified fabricators and installers, so your manufacturer warranty stays intact.",
+    img: "/img/mat-quartzite.jpg",
+    swatches: ["/img/k-white-island.jpg", "/img/k-waterfall-hood.jpg", "/img/k-island-wood.jpg", "/img/k-white-backsplash.jpg"],
+  },
+  {
+    slug: "semi-precious",
+    name: "Semi-Precious Gem Stones",
+    tagline: "Ultra-luxurious surfaces that glow from within.",
+    body: "Concetto, Exotica and gem surfaces — agate, onyx and quartz crystal for countertops, floors, walls, tables and furniture. Backlit for drama, and available with aluminum honeycomb backing at 10–15mm for private aircraft and vessels. We're international gem-surface specialists.",
+    img: "/img/agate-detail.jpg",
+    swatches: ["/img/backlit-agate-island.jpg", "/img/agate-runner.jpg", "/img/backlit-feature.jpg", "/img/backlit-marble.jpg"],
+  },
+] as const;
+
+export const quartzBrands = [
+  "Cambria",
+  "Silestone",
+  "Caesarstone",
+  "Compac",
+  "HanStone",
+  "Zodiaq",
+];
+
+/* ---------------- Services ---------------- */
+
+export const services = [
+  {
+    slug: "custom-work",
+    name: "Custom Work",
     blurb:
-      "Nature's hardest decorative stone — the depth of marble with the resilience of granite.",
+      "One-off commissions where the brief is simply: make it perfect. If it can be cut from stone, we've likely already built it.",
+    img: "/img/k-conference-oceanview.jpg",
+  },
+  {
+    slug: "summer-kitchens",
+    name: "Summer Kitchens",
+    blurb:
+      "Outdoor kitchens built start to finish — surfaces engineered for Florida sun, salt air and entertaining.",
+    img: "/img/k-travertine-living.jpg",
+  },
+  {
+    slug: "fireplaces-columns",
+    name: "Fireplaces & Columns",
+    blurb:
+      "Fireplaces carved from solid marble and columns capped by hand — architectural stonework, not cladding.",
+    img: "/img/marble-moody.jpg",
+  },
+  {
+    slug: "marine",
+    name: "Marine Applications",
+    blurb:
+      "Stone for yachts and aircraft. On the Lazzara “Maggie” we milled HanStone quartz to 8mm to match the original floor — with honeycomb backing when weight matters.",
     img: "/img/mat-quartzite.jpg",
   },
   {
-    name: "Marble",
+    slug: "repair-restoration",
+    name: "Repair & Restoration",
     blurb:
-      "Timeless veining for those who want a kitchen that reads like sculpture.",
-    img: "/img/mat-marble.jpg",
-  },
-  {
-    name: "Granite",
-    blurb:
-      "Endlessly varied, virtually indestructible, and warm underhand for generations.",
-    img: "/img/mat-river-white.jpg",
-  },
-  {
-    name: "Quartz",
-    blurb:
-      "Engineered consistency from Cambria, Silestone & Caesarstone — color without compromise.",
-    img: "/img/mat-calacatta.jpg",
-  },
-  {
-    name: "Porcelain",
-    blurb:
-      "Ultra-thin large-format slabs for facades, floors and feather-light waterfalls.",
+      "Full-service stone care: crystallization, diamond grinding, honing and polishing. Chips, scratches, settling seams and dropping sinks — we fix what others can't.",
     img: "/img/detail-edge.jpg",
   },
   {
-    name: "Semi-Precious",
+    slug: "sinks",
+    name: "Sinks & Faucets",
     blurb:
-      "Backlit agate, onyx and gemstone surfaces — our signature one-of-a-kind statements.",
-    img: "/img/agate-detail.jpg",
+      "From undermount to vessel — stainless, cast iron, hammered copper, stone composite, porcelain, glass, and even a client's 10-year-old giant clam shell turned into a sink.",
+    img: "/img/detail-sink2.jpg",
+  },
+  {
+    slug: "3d-renderings",
+    name: "3-D Renderings",
+    blurb:
+      "See the finished layout before we cut. For saxophonist Clarence Clemons we vein-matched nine slabs of Blue Louise from a single rendering.",
+    img: "/img/install-template.jpg",
   },
 ] as const;
+
+/* ---------------- Technology / The Shop ---------------- */
+
+export const shopTech = [
+  {
+    name: "Laser templating since 2007",
+    body: "No wood sticks and hot glue. The LT-55 XL Precision Laser Templator captures your room to the millimeter; from the field we email the template, photos and your signature straight to the shop to begin fabrication.",
+    img: "/img/install-template.jpg",
+  },
+  {
+    name: "5-axis CNC fabrication",
+    body: "Our Denver Skema Logic C-180 CNC bridge saw can cut an entire kitchen automatically — faster, more accurate and more repeatable than conventional saws, with full CAD/CAM design behind it.",
+    img: "/img/tech-cnc.jpg",
+  },
+  {
+    name: "World's-first 5-axis saw-waterjet",
+    body: "Jupiter Granite purchased one of the first 5-axis saw-waterjets, cutting intricate radii, mitered waterfalls and drainboards to a tolerance the hand only ever has to finish — never correct.",
+    img: "/img/tech-waterjet.jpg",
+  },
+  {
+    name: "Effortless material handling & seam setting",
+    body: "A Manzelli vacuum lifter and Gorbel overhead crane suspend slabs up to 2,200 lbs and tilt them from vertical to horizontal. Our Gorilla Grip seam clamp pulls invisible, lasting seams.",
+    img: "/img/tech-polish.jpg",
+  },
+] as const;
+
+/* ---------------- Estimate steps ---------------- */
+
+export const estimateSteps = [
+  "A simple sketch with shapes and dimensions along the walls — note raised bars, overhangs, arches and backsplashes.",
+  "Your material selection (or bring photos / inspiration and we'll guide you).",
+  "Whether we need to remove any existing surfaces.",
+  "Your contact information and the project location.",
+] as const;
+
+/* ---------------- Gallery ---------------- */
 
 export const gallery = [
   { src: "/img/k-calacatta-waterfall.jpg", alt: "Calacatta quartz waterfall island in a bright modern kitchen", span: "lg:col-span-2 lg:row-span-2" },
@@ -74,9 +188,15 @@ export const gallery = [
   { src: "/img/k-open-concept.jpg", alt: "Open-concept island in a light-filled great room", span: "lg:col-span-2" },
   { src: "/img/k-mosaic.jpg", alt: "Quartz counters with mosaic tile backsplash" },
   { src: "/img/k-blue-granite.jpg", alt: "Blue pearl granite with matching tile" },
+  { src: "/img/backlit-agate-island.jpg", alt: "Backlit blue agate semi-precious island" },
+  { src: "/img/k-waterfall-pair.jpg", alt: "Paired white waterfall islands during installation" },
   { src: "/img/detail-sink.jpg", alt: "Hand-polished undermount sink cutout" },
   { src: "/img/k-traditional-wood.jpg", alt: "Traditional wood kitchen with calacatta island" },
+  { src: "/img/k-grey.jpg", alt: "Grey-and-white transitional kitchen" },
+  { src: "/img/k-white-corner.jpg", alt: "Bright white corner kitchen with quartz counters" },
 ] as const;
+
+/* ---------------- Reviews ---------------- */
 
 export const reviews = [
   {
@@ -97,12 +217,4 @@ export const reviews = [
     name: "Liz Renneberg",
     meta: "Google review · 5★",
   },
-] as const;
-
-export const nav = [
-  { label: "Materials", href: "#materials" },
-  { label: "Signature", href: "#signature" },
-  { label: "Craft", href: "#process" },
-  { label: "Work", href: "#work" },
-  { label: "Studio", href: "#about" },
 ] as const;

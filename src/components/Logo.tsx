@@ -1,5 +1,4 @@
 export function WaveMark({ className = "" }: { className?: string }) {
-  // Clean recreation of the Jupiter Granite ocean-wave mark.
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true" fill="none">
       <defs>
@@ -21,21 +20,24 @@ export function WaveMark({ className = "" }: { className?: string }) {
 
 export function Wordmark({
   className = "",
-  tone = "light",
+  onDark = true,
 }: {
   className?: string;
-  tone?: "light" | "dark";
+  onDark?: boolean;
 }) {
-  const text = tone === "light" ? "text-cream" : "text-ink";
-  const sub = tone === "light" ? "text-stone" : "text-stone-dark";
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <WaveMark className="h-8 w-8 shrink-0" />
       <div className="leading-none">
-        <div className={`font-display text-[1.15rem] font-semibold tracking-tight ${text}`}>
+        <div
+          className={`font-display text-[1.15rem] font-semibold ${onDark ? "text-ondark" : "text-fg"}`}
+          style={{ letterSpacing: "-0.01em" }}
+        >
           Jupiter Granite
         </div>
-        <div className={`eyebrow mt-1 text-[0.5rem] ${sub}`}>Est. 2000 · Jupiter, FL</div>
+        <div className={`eyebrow mt-1 text-[0.5rem] ${onDark ? "text-ondarkmuted" : "text-faint"}`}>
+          Est. 2000 · Jupiter, FL
+        </div>
       </div>
     </div>
   );
