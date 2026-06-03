@@ -200,15 +200,20 @@ body {
 }
 
 /* Logo switching (driven by html[data-logo]) */
-.logo-block, .logo-blockinv, .logo-serif, .logo-stone { display: none; }
+.logo-block, .logo-blockinv, .logo-stone, .serif-bronze, .serif-silver { display: none; }
 [data-logo="block"] .logo-wave { display: none; }
 [data-logo="block"] .logo-block { display: inline-block; }
 [data-logo="blockinv"] .logo-wave { display: none; }
 [data-logo="blockinv"] .logo-blockinv { display: inline-block; }
-[data-logo="serif"] .logo-wave { display: none; }
-[data-logo="serif"] .logo-serif { display: inline-block; }
 [data-logo="stone"] .logo-wave { display: none; }
 [data-logo="stone"] .logo-stone { display: inline-block; }
+/* Marble serif: bronze marble in light mode, silver marble in dark mode */
+[data-logo="serif"] .logo-wave { display: none; }
+[data-logo="serif"] .serif-bronze { display: inline-block; }
+[data-logo="serif"][data-mode="dark"] .serif-bronze { display: none; }
+[data-logo="serif"][data-mode="dark"] .serif-silver { display: inline-block; }
+[data-theme="monolith"][data-logo="serif"]:not([data-mode]) .serif-bronze { display: none; }
+[data-theme="monolith"][data-logo="serif"]:not([data-mode]) .serif-silver { display: inline-block; }
 
 /* Full-bleed: only active in the Mosaic theme */
 [data-theme="mosaic"] .bleed {

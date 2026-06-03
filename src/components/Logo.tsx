@@ -61,11 +61,16 @@ export function Wordmark({
         className="logo-opt logo-blockinv h-9 w-auto"
       />
 
-      {/* Marble serif wordmark image */}
+      {/* Marble serif wordmark — bronze in light mode, silver in dark mode */}
       <img
-        src={`/img/logos/serif-${variant}.png`}
+        src="/img/logos/serif-on-light.png"
         alt="Jupiter Granite Co."
-        className="logo-opt logo-serif h-10 w-auto"
+        className="logo-opt serif-bronze h-10 w-auto"
+      />
+      <img
+        src="/img/logos/serif-on-dark.png"
+        alt="Jupiter Granite Co."
+        className="logo-opt serif-silver h-10 w-auto"
       />
 
       {/* Stone-textured wordmark image */}
