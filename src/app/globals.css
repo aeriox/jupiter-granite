@@ -109,13 +109,46 @@
   --display-weight: 400;
 }
 
+/* ---------------- Light / dark mode ----------------
+   Each theme has a natural mode (light, except Monolith=dark).
+   data-mode forces the opposite; only the overrides below are needed. */
+
+[data-theme="atelier"][data-mode="dark"] {
+  --color-bg: #14110d; --color-surface: #1c1813; --color-surface2: #2a241b;
+  --color-fg: #f1ebe0; --color-muted: #b3aa9a; --color-faint: #7d7466;
+  --color-accent: #c79c5d; --color-accent2: #46a0cf; --color-line: rgba(255, 255, 255, 0.1);
+  --color-dark: #0b0907; --color-ondark: #f1ebe0; --color-ondarkmuted: rgba(241, 235, 224, 0.7);
+}
+[data-theme="coastal"][data-mode="dark"] {
+  --color-bg: #0a1922; --color-surface: #0f2531; --color-surface2: #173443;
+  --color-fg: #e8f1f5; --color-muted: #9fb6c1; --color-faint: #67808d;
+  --color-accent: #34a9da; --color-accent2: #cfe6f0; --color-line: rgba(255, 255, 255, 0.1);
+  --color-dark: #05121a; --color-ondark: #e8f1f5; --color-ondarkmuted: rgba(232, 241, 245, 0.7);
+}
+[data-theme="mosaic"][data-mode="dark"] {
+  --color-bg: #0d0c0b; --color-surface: #161513; --color-surface2: #211e1b;
+  --color-fg: #f3efe9; --color-muted: #b0a99d; --color-faint: #7a7468;
+  --color-accent: #c79566; --color-accent2: #f3efe9; --color-line: rgba(255, 255, 255, 0.1);
+  --color-dark: #070605; --color-ondark: #f3efe9; --color-ondarkmuted: rgba(243, 239, 233, 0.7);
+}
+[data-theme="monolith"][data-mode="light"] {
+  --color-bg: #f3f2ef; --color-surface: #ffffff; --color-surface2: #e7e5e0;
+  --color-fg: #16161a; --color-muted: #54535a; --color-faint: #8a8992;
+  --color-accent: #9c7a33; --color-accent2: #2f6f8f; --color-line: rgba(20, 20, 25, 0.12);
+  --color-dark: #16161a; --color-ondark: #f3f2ef; --color-ondarkmuted: rgba(243, 242, 239, 0.7);
+}
+
 /* ---------------- Font pairings ---------------- */
 
 [data-font="fraunces"] { --font-display: var(--font-fraunces); --font-sans: var(--font-jakarta); }
 [data-font="cormorant"] { --font-display: var(--font-cormorant); --font-sans: var(--font-mulish); --display-weight: 500; }
-[data-font="space"] { --font-display: var(--font-space); --font-sans: var(--font-sora); --display-tracking: -0.03em; --display-weight: 500; }
 [data-font="playfair"] { --font-display: var(--font-playfair); --font-sans: var(--font-manrope); --display-weight: 500; }
 [data-font="dmserif"] { --font-display: var(--font-dmserif); --font-sans: var(--font-dmsans); --display-weight: 400; }
+/* sans-serif display pairings */
+[data-font="space"] { --font-display: var(--font-space); --font-sans: var(--font-sora); --display-tracking: -0.03em; --display-weight: 500; }
+[data-font="bricolage"] { --font-display: var(--font-bricolage); --font-sans: var(--font-hanken); --display-tracking: -0.02em; --display-weight: 600; }
+[data-font="syne"] { --font-display: var(--font-syne); --font-sans: var(--font-outfit); --display-tracking: -0.02em; --display-weight: 700; }
+[data-font="schibsted"] { --font-display: var(--font-schibsted); --font-sans: var(--font-schibsted); --display-tracking: -0.03em; --display-weight: 700; }
 
 /* ---------------- Base ---------------- */
 

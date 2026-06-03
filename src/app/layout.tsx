@@ -10,6 +10,11 @@ import {
   Manrope,
   DM_Serif_Display,
   DM_Sans,
+  Bricolage_Grotesque,
+  Hanken_Grotesk,
+  Syne,
+  Outfit,
+  Schibsted_Grotesk,
 } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
@@ -26,8 +31,13 @@ const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["lati
 const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"], display: "swap" });
 const dmSerif = DM_Serif_Display({ variable: "--font-dmserif", subsets: ["latin"], weight: "400", display: "swap" });
 const dmSans = DM_Sans({ variable: "--font-dmsans", subsets: ["latin"], display: "swap" });
+const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"], display: "swap" });
+const hanken = Hanken_Grotesk({ variable: "--font-hanken", subsets: ["latin"], display: "swap" });
+const syne = Syne({ variable: "--font-syne", subsets: ["latin"], display: "swap" });
+const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin"], display: "swap" });
+const schibsted = Schibsted_Grotesk({ variable: "--font-schibsted", subsets: ["latin"], display: "swap" });
 
-const fontVars = [fraunces, jakarta, cormorant, mulish, space, sora, playfair, manrope, dmSerif, dmSans]
+const fontVars = [fraunces, jakarta, cormorant, mulish, space, sora, playfair, manrope, dmSerif, dmSans, bricolage, hanken, syne, outfit, schibsted]
   .map((f) => f.variable)
   .join(" ");
 
@@ -88,7 +98,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme="atelier" data-font="fraunces" data-logo="wave" suppressHydrationWarning className={`${fontVars} h-full antialiased`}>
+    <html lang="en" data-theme="atelier" data-font="fraunces" data-logo="block" suppressHydrationWarning className={`${fontVars} h-full antialiased`}>
       <head>
         <ThemeScript />
       </head>
