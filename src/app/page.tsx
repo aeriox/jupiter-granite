@@ -70,7 +70,7 @@ export default function Home() {
           <div className="marquee flex shrink-0 items-center gap-10 whitespace-nowrap pr-10 text-ondarkmuted">
             {[...Array(2)].map((_, dup) => (
               <span key={dup} className="flex items-center gap-10">
-                {["Granite", "Quartzite", "Marble", "Fine Quartz", "Porcelain", "Onyx & Semi-Precious", "Cambria Authorized Seller", "Lifetime Guarantee", "Women-Owned · Est. 2000"].map((t) => (
+                {["Granite", "Quartzite", "Marble", "Fine Quartz", "Porcelain", "Onyx & Semi-Precious", "Cambria Authorized Seller", "Lifetime Guarantee", "Family-Owned · Est. 2000"].map((t) => (
                   <span key={t} className="flex items-center gap-10 font-display text-lg font-display-italic">
                     {t}<WaveMark className="h-4 w-4" />
                   </span>

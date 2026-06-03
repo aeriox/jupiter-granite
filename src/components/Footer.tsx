@@ -42,7 +42,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-ondarkmuted sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved. · License {site.license}</p>
-          <p>Women-owned · Serving Jupiter &amp; all of Palm Beach County</p>
+          <p>Family-owned · Serving Jupiter &amp; all of Palm Beach County</p>
         </div>
       </Shell>
     </footer>

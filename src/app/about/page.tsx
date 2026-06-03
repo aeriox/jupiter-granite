@@ -31,7 +31,7 @@ export default function About() {
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">
-              Jupiter Granite Co. is a family business — a women-owned stone studio where every slab
+              Jupiter Granite Co. is a family business — a stone studio where every slab
               is chosen, cut and finished by people who&apos;ve been shaping granite, quartzite and
               marble for three generations. We measure success one home at a time.
             </p>
@@ -53,12 +53,12 @@ export default function About() {
               />
             </div>
 
-            {/* Floating Women-Owned badge */}
+            {/* Floating heritage badge */}
             <div className="absolute -bottom-5 right-5 rounded-2xl border border-line bg-surface p-1.5 shadow-xl sm:right-8">
               <div className="rounded-[calc(1rem-0.375rem)] bg-bg px-5 py-4">
                 <div className="flex items-center gap-2.5">
                   <WaveMark className="h-5 w-5" />
-                  <span className="font-display text-lg">Women-Owned</span>
+                  <span className="font-display text-lg">3rd Generation</span>
                 </div>
                 <p className="mt-1 text-xs text-faint">Family business · Est. {site.established}</p>
               </div>
@@ -76,8 +76,8 @@ export default function About() {
                 Founded in {site.established} and led by Jupiter native {site.owner} — a
                 third-generation master craftsman holding Palm Beach County contractor license{" "}
                 {site.license} — Jupiter Granite grew from a family trade into one of the Treasure
-                Coast&apos;s most trusted stone studios. We&apos;re proud to be women-owned, and that
-                spirit shows in how we treat every client and every project.
+                Coast&apos;s most trusted stone studios. That craftsmanship shows in how we treat
+                every client and every project.
               </p>
               <p>
                 Our showroom at 952 Jupiter Park Lane displays full slabs alongside cabinetry, tile,
