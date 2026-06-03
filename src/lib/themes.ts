@@ -13,7 +13,7 @@ export type FontId =
   | "dmsans"
   | "jost"
   | "poppins";
-export type LogoId = "block" | "serif";
+export type LogoId = "block" | "blockinv" | "serif";
 
 export const themes: {
   id: ThemeId;
@@ -44,6 +44,7 @@ export const fonts: { id: FontId; name: string; kind: "serif" | "sans" }[] = [
 
 export const logos: { id: LogoId; name: string; preview: string }[] = [
   { id: "block", name: "Planet wordmark", preview: "/img/logos/block-on-light.png" },
+  { id: "blockinv", name: "Planet · inverted", preview: "/img/logos/block-inv-on-light.png" },
   { id: "serif", name: "Marble serif", preview: "/img/logos/serif-on-light.png" },
 ];
 

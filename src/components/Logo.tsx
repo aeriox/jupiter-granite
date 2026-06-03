@@ -54,6 +54,13 @@ export function Wordmark({
         className="logo-opt logo-block h-9 w-auto"
       />
 
+      {/* Planet wordmark — inverted planet */}
+      <img
+        src={`/img/logos/block-inv-${variant}.png`}
+        alt="Jupiter Granite Co."
+        className="logo-opt logo-blockinv h-9 w-auto"
+      />
+
       {/* Marble serif wordmark image */}
       <img
         src={`/img/logos/serif-${variant}.png`}

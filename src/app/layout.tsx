@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: ["/img/k-calacatta-waterfall.jpg"],
   },
-  icons: { icon: "/icon.svg" },
+  icons: { icon: "/icon.png" },
 };
 
 const jsonLd = {
