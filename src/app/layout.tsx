@@ -88,7 +88,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme="atelier" data-font="fraunces" suppressHydrationWarning className={`${fontVars} h-full antialiased`}>
+    <html lang="en" data-theme="atelier" data-font="fraunces" data-logo="wave" suppressHydrationWarning className={`${fontVars} h-full antialiased`}>
       <head>
         <ThemeScript />
       </head>

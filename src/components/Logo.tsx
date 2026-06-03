@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 export function WaveMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true" fill="none">
@@ -18,6 +20,10 @@ export function WaveMark({ className = "" }: { className?: string }) {
   );
 }
 
+/**
+ * Renders all three logo options; CSS (driven by html[data-logo]) reveals the
+ * active one. The image wordmarks pick a light/dark variant from `onDark`.
+ */
 export function Wordmark({
   className = "",
   onDark = true,
@@ -25,20 +31,35 @@ export function Wordmark({
   className?: string;
   onDark?: boolean;
 }) {
+  const variant = onDark ? "on-dark" : "on-light";
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
-      <WaveMark className="h-8 w-8 shrink-0" />
-      <div className="leading-none">
-        <div
-          className={`font-display text-[1.15rem] font-semibold ${onDark ? "text-ondark" : "text-fg"}`}
-          style={{ letterSpacing: "-0.01em" }}
-        >
-          Jupiter Granite
-        </div>
-        <div className={`eyebrow mt-1 text-[0.5rem] ${onDark ? "text-ondarkmuted" : "text-faint"}`}>
-          Est. 2000 · Jupiter, FL
-        </div>
-      </div>
+    <div className={`flex items-center ${className}`}>
+      {/* Wave mark + text (default) */}
+      <span className="logo-opt logo-wave flex items-center gap-2.5">
+        <WaveMark className="h-8 w-8 shrink-0" />
+        <span className="leading-none">
+          <span className={`block font-display text-[1.15rem] font-semibold ${onDark ? "text-ondark" : "text-fg"}`} style={{ letterSpacing: "-0.01em" }}>
+            Jupiter Granite
+          </span>
+          <span className={`eyebrow mt-1 block text-[0.5rem] ${onDark ? "text-ondarkmuted" : "text-faint"}`}>
+            Est. 2000 · Jupiter, FL
+          </span>
+        </span>
+      </span>
+
+      {/* Planet wordmark image */}
+      <img
+        src={`/img/logos/block-${variant}.png`}
+        alt="Jupiter Granite Co."
+        className="logo-opt logo-block h-9 w-auto"
+      />
+
+      {/* Marble serif wordmark image */}
+      <img
+        src={`/img/logos/serif-${variant}.png`}
+        alt="Jupiter Granite Co."
+        className="logo-opt logo-serif h-10 w-auto"
+      />
     </div>
   );
 }

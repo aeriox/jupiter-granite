@@ -1,21 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { themes, fonts, DEFAULT_THEME, DEFAULT_FONT, type ThemeId, type FontId } from "@/lib/themes";
+import { themes, fonts, logos, DEFAULT_THEME, DEFAULT_FONT, DEFAULT_LOGO, type ThemeId, type FontId, type LogoId } from "@/lib/themes";
+import { WaveMark } from "./Logo";
 
 const THEME_KEY = "jg-theme";
 const FONT_KEY = "jg-font";
+const LOGO_KEY = "jg-logo";
 
 export function Picker() {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
   const [font, setFont] = useState<FontId>(DEFAULT_FONT);
+  const [logo, setLogo] = useState<LogoId>(DEFAULT_LOGO);
 
   useEffect(() => {
-    const t = (localStorage.getItem(THEME_KEY) as ThemeId) || DEFAULT_THEME;
-    const f = (localStorage.getItem(FONT_KEY) as FontId) || DEFAULT_FONT;
-    setTheme(t);
-    setFont(f);
+    setTheme((localStorage.getItem(THEME_KEY) as ThemeId) || DEFAULT_THEME);
+    setFont((localStorage.getItem(FONT_KEY) as FontId) || DEFAULT_FONT);
+    setLogo((localStorage.getItem(LOGO_KEY) as LogoId) || DEFAULT_LOGO);
   }, []);
 
   function applyTheme(id: ThemeId) {
@@ -27,6 +29,11 @@ export function Picker() {
     setFont(id);
     document.documentElement.dataset.font = id;
     localStorage.setItem(FONT_KEY, id);
+  }
+  function applyLogo(id: LogoId) {
+    setLogo(id);
+    document.documentElement.dataset.logo = id;
+    localStorage.setItem(LOGO_KEY, id);
   }
 
   return (
@@ -57,6 +64,29 @@ export function Picker() {
                   </div>
                   <div className="mt-2 text-[0.8rem] font-medium text-fg">{t.name}</div>
                   <div className="text-[0.62rem] leading-tight text-faint">{t.desc}</div>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-4 eyebrow text-accent">Logo</div>
+            <div className="mt-2 flex flex-col gap-1">
+              {logos.map((l) => (
+                <button
+                  key={l.id}
+                  onClick={() => applyLogo(l.id)}
+                  className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-left transition-colors ${
+                    logo === l.id ? "bg-fg text-bg" : "hover:bg-fg/5"
+                  }`}
+                >
+                  <span className="text-[0.8rem]">{l.name}</span>
+                  {l.preview ? (
+                    <span className="flex h-6 w-24 items-center justify-end overflow-hidden rounded bg-white/90 px-1">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={l.preview} alt="" className="max-h-5 w-auto object-contain" />
+                    </span>
+                  ) : (
+                    <WaveMark className="h-5 w-5" />
+                  )}
                 </button>
               ))}
             </div>
@@ -99,6 +129,6 @@ export function Picker() {
 }
 
 export function ThemeScript() {
-  const code = `(function(){try{var t=localStorage.getItem('${THEME_KEY}')||'${DEFAULT_THEME}';var f=localStorage.getItem('${FONT_KEY}')||'${DEFAULT_FONT}';document.documentElement.dataset.theme=t;document.documentElement.dataset.font=f;}catch(e){document.documentElement.dataset.theme='${DEFAULT_THEME}';document.documentElement.dataset.font='${DEFAULT_FONT}';}})();`;
+  const code = `(function(){try{var d=document.documentElement;d.dataset.theme=localStorage.getItem('${THEME_KEY}')||'${DEFAULT_THEME}';d.dataset.font=localStorage.getItem('${FONT_KEY}')||'${DEFAULT_FONT}';d.dataset.logo=localStorage.getItem('${LOGO_KEY}')||'${DEFAULT_LOGO}';}catch(e){var x=document.documentElement;x.dataset.theme='${DEFAULT_THEME}';x.dataset.font='${DEFAULT_FONT}';x.dataset.logo='${DEFAULT_LOGO}';}})();`;
   return <script dangerouslySetInnerHTML={{ __html: code }} />;
 }

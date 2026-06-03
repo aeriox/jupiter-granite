@@ -1,5 +1,6 @@
 export type ThemeId = "atelier" | "coastal" | "mosaic" | "monolith";
 export type FontId = "fraunces" | "cormorant" | "space" | "playfair" | "dmserif";
+export type LogoId = "wave" | "block" | "serif";
 
 export const themes: {
   id: ThemeId;
@@ -21,5 +22,12 @@ export const fonts: { id: FontId; name: string; display: string }[] = [
   { id: "dmserif", name: "DM Serif / DM Sans", display: "DM Serif Display" },
 ];
 
+export const logos: { id: LogoId; name: string; preview: string; previewOnDark: boolean }[] = [
+  { id: "wave", name: "Wave mark", preview: "", previewOnDark: true },
+  { id: "block", name: "Planet wordmark", preview: "/img/logos/block-on-light.png", previewOnDark: false },
+  { id: "serif", name: "Marble serif", preview: "/img/logos/serif-on-light.png", previewOnDark: false },
+];
+
 export const DEFAULT_THEME: ThemeId = "atelier";
 export const DEFAULT_FONT: FontId = "fraunces";
+export const DEFAULT_LOGO: LogoId = "wave";

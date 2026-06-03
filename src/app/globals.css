@@ -162,6 +162,13 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* Logo switching (driven by html[data-logo]) */
+.logo-block, .logo-serif { display: none; }
+[data-logo="block"] .logo-wave { display: none; }
+[data-logo="block"] .logo-block { display: inline-block; }
+[data-logo="serif"] .logo-wave { display: none; }
+[data-logo="serif"] .logo-serif { display: inline-block; }
+
 /* Full-bleed: only active in the Mosaic theme */
 [data-theme="mosaic"] .bleed {
   width: 100vw;
