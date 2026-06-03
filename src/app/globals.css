@@ -149,6 +149,10 @@
 [data-font="bricolage"] { --font-display: var(--font-bricolage); --font-sans: var(--font-hanken); --display-tracking: -0.02em; --display-weight: 600; }
 [data-font="syne"] { --font-display: var(--font-syne); --font-sans: var(--font-outfit); --display-tracking: -0.02em; --display-weight: 700; }
 [data-font="schibsted"] { --font-display: var(--font-schibsted); --font-sans: var(--font-schibsted); --display-tracking: -0.03em; --display-weight: 700; }
+[data-font="montserrat"] { --font-display: var(--font-montserrat); --font-sans: var(--font-montserrat); --display-tracking: -0.02em; --display-weight: 700; }
+[data-font="dmsans"] { --font-display: var(--font-dmsans); --font-sans: var(--font-dmsans); --display-tracking: -0.03em; --display-weight: 600; }
+[data-font="jost"] { --font-display: var(--font-jost); --font-sans: var(--font-jost); --display-tracking: -0.01em; --display-weight: 600; }
+[data-font="poppins"] { --font-display: var(--font-poppins); --font-sans: var(--font-poppins); --display-tracking: -0.02em; --display-weight: 600; }
 
 /* ---------------- Base ---------------- */
 

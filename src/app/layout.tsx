@@ -15,6 +15,9 @@ import {
   Syne,
   Outfit,
   Schibsted_Grotesk,
+  Montserrat,
+  Jost,
+  Poppins,
 } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
@@ -36,8 +39,11 @@ const hanken = Hanken_Grotesk({ variable: "--font-hanken", subsets: ["latin"], d
 const syne = Syne({ variable: "--font-syne", subsets: ["latin"], display: "swap" });
 const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin"], display: "swap" });
 const schibsted = Schibsted_Grotesk({ variable: "--font-schibsted", subsets: ["latin"], display: "swap" });
+const montserrat = Montserrat({ variable: "--font-montserrat", subsets: ["latin"], display: "swap" });
+const jost = Jost({ variable: "--font-jost", subsets: ["latin"], display: "swap" });
+const poppins = Poppins({ variable: "--font-poppins", subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap" });
 
-const fontVars = [fraunces, jakarta, cormorant, mulish, space, sora, playfair, manrope, dmSerif, dmSans, bricolage, hanken, syne, outfit, schibsted]
+const fontVars = [fraunces, jakarta, cormorant, mulish, space, sora, playfair, manrope, dmSerif, dmSans, bricolage, hanken, syne, outfit, schibsted, montserrat, jost, poppins]
   .map((f) => f.variable)
   .join(" ");
 

@@ -8,7 +8,11 @@ export type FontId =
   | "space"
   | "bricolage"
   | "syne"
-  | "schibsted";
+  | "schibsted"
+  | "montserrat"
+  | "dmsans"
+  | "jost"
+  | "poppins";
 export type LogoId = "block" | "serif";
 
 export const themes: {
@@ -28,6 +32,10 @@ export const fonts: { id: FontId; name: string; kind: "serif" | "sans" }[] = [
   { id: "cormorant", name: "Cormorant / Mulish", kind: "serif" },
   { id: "playfair", name: "Playfair / Manrope", kind: "serif" },
   { id: "dmserif", name: "DM Serif / DM Sans", kind: "serif" },
+  { id: "montserrat", name: "Montserrat", kind: "sans" },
+  { id: "dmsans", name: "DM Sans", kind: "sans" },
+  { id: "jost", name: "Jost (Gotham-style)", kind: "sans" },
+  { id: "poppins", name: "Poppins (Garet-style)", kind: "sans" },
   { id: "space", name: "Space Grotesk / Sora", kind: "sans" },
   { id: "bricolage", name: "Bricolage / Hanken", kind: "sans" },
   { id: "syne", name: "Syne / Outfit", kind: "sans" },
