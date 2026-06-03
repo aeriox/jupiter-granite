@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Reveal } from "@/components/Reveal";
 import { Gallery } from "@/components/Gallery";
+import { BrandMarquee } from "@/components/BrandMarquee";
 import { WaveMark } from "@/components/Logo";
 import { Shell, Eyebrow, Stars, CTA, SectionHead } from "@/components/ui";
 import { site, materials, reviews } from "@/lib/site";
@@ -139,6 +140,9 @@ export default function Home() {
           </div>
         </Shell>
       </section>
+
+      {/* BRAND MARQUEE */}
+      <BrandMarquee />
 
       {/* SIGNATURE */}
       <section className="relative overflow-hidden bg-dark py-[var(--section-y)] text-ondark">
