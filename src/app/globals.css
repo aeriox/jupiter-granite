@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Jupiter Granite Co. — Editorial Luxury design system
+   Warm stone neutrals · obsidian · ocean-blue · bronze
+   ============================================================ */
+
+@theme {
+  --color-ink: #15130f;        /* warm near-black */
+  --color-espresso: #221c15;
+  --color-obsidian: #100e0b;
+  --color-canvas: #f4efe6;     /* ivory page */
+  --color-cream: #fbf8f2;      /* card */
+  --color-sand: #e7dece;
+  --color-stone: #8c8479;      /* muted gray text */
+  --color-stone-dark: #5b554c;
+
+  --color-ocean: #2ba4da;      /* brand wave blue */
+  --color-ocean-deep: #1a6e97;
+  --color-navy: #112d3e;
+
+  --color-bronze: #b58a4d;     /* metallic accent */
+  --color-bronze-soft: #c9a877;
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-jakarta);
+
+  --ease-lux: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  border-color: color-mix(in srgb, var(--color-ink) 10%, transparent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-feature-settings: "ss01";
+  overflow-x: hidden;
 }
+
+::selection {
+  background: var(--color-bronze);
+  color: #fff;
+}
+
+/* Film-grain overlay — fixed, non-interactive */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+.eyebrow {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-weight: 600;
+}
+
+/* Scroll-reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(2.5rem);
+  filter: blur(6px);
+  transition: opacity 0.9s var(--ease-lux), transform 0.9s var(--ease-lux),
+    filter 0.9s var(--ease-lux);
+  will-change: transform, opacity;
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  html { scroll-behavior: auto; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee { animation: marquee 38s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(2%, -3%); }
+}
+.drift { animation: drift 14s ease-in-out infinite; }
+
+.no-bar::-webkit-scrollbar { display: none; }
+.no-bar { scrollbar-width: none; }
