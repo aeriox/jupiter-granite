@@ -11,6 +11,7 @@ const THEME_KEY = "jg-theme";
 const FONT_KEY = "jg-font";
 const LOGO_KEY = "jg-logo";
 const MODE_KEY = "jg-mode";
+const DISMISS_KEY = "jg-picker-dismissed";
 
 export function Picker() {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,22 @@ export function Picker() {
     setLogo((localStorage.getItem(LOGO_KEY) as LogoId) || DEFAULT_LOGO);
     const m = localStorage.getItem(MODE_KEY);
     setMode(m === "light" || m === "dark" ? m : null);
+    // Open by default on first visit; stay closed once dismissed.
+    if (!localStorage.getItem(DISMISS_KEY)) setOpen(true);
   }, []);
+
+  // Any close is remembered so it doesn't reopen on every page.
+  function close() {
+    setOpen(false);
+    try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
+  }
+  function toggle() {
+    setOpen((o) => {
+      if (!o) return true;
+      try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
+      return false;
+    });
+  }
 
   const effectiveMode: ModeId = mode ?? naturalMode(theme);
 
@@ -75,7 +91,7 @@ export function Picker() {
           <div className="no-bar max-h-[calc(100dvh-7.5rem)] overflow-y-auto rounded-[calc(1rem-0.375rem)] bg-bg p-4">
             <div className="flex items-center justify-between">
               <span className="eyebrow text-accent">Appearance</span>
-              <button onClick={() => setOpen(false)} aria-label="Close" className="text-faint hover:text-fg">
+              <button onClick={close} aria-label="Close" className="text-faint hover:text-fg">
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" /></svg>
               </button>
             </div>
@@ -152,7 +168,7 @@ export function Picker() {
       )}
 
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
         aria-label="Customize appearance"
         className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-dark text-ondark shadow-xl shadow-black/30 transition-transform duration-300 hover:scale-105 active:scale-95"
       >
