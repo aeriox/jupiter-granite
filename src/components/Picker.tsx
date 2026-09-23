@@ -13,8 +13,8 @@ const LOGO_KEY = "jg-logo";
 const MODE_KEY = "jg-mode";
 
 export function Picker() {
-  // Always open by default on every load; the visitor can collapse it.
-  const [open, setOpen] = useState(true);
+  // Default closed so the hero stays visible (esp. mobile). Visitor opens via the fab.
+  const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
   const [font, setFont] = useState<FontId>(DEFAULT_FONT);
   const [logo, setLogo] = useState<LogoId>(DEFAULT_LOGO);
@@ -27,6 +27,13 @@ export function Picker() {
     const m = localStorage.getItem(MODE_KEY);
     setMode(m === "light" || m === "dark" ? m : null);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.pickerOpen = open ? "1" : "0";
+    return () => {
+      delete document.documentElement.dataset.pickerOpen;
+    };
+  }, [open]);
 
   const close = () => setOpen(false);
   const toggle = () => setOpen((o) => !o);
@@ -73,7 +80,7 @@ export function Picker() {
   );
 
   return (
-    <div className="pointer-events-none fixed bottom-5 right-5 z-[80] flex flex-col items-end gap-3">
+    <div className="pointer-events-none fixed bottom-5 right-5 z-[80] flex flex-col items-end gap-3 max-md:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]">
       {open && (
         <div className="pointer-events-auto w-[19rem] max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-2xl shadow-black/20">
           <div className="no-bar max-h-[calc(100dvh-7.5rem)] overflow-y-auto rounded-[calc(1rem-0.375rem)] bg-bg p-4">

@@ -23,6 +23,7 @@ import "./globals.css";
 import { site } from "@/lib/site";
 import { Footer } from "@/components/Footer";
 import { Picker, ThemeScript } from "@/components/Picker";
+import { StickyMobileBar } from "@/components/StickyMobileBar";
 
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], display: "swap" });
 const jakarta = Plus_Jakarta_Sans({ variable: "--font-jakarta", subsets: ["latin"], display: "swap" });
@@ -112,6 +113,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
         <Footer />
+        <StickyMobileBar />
         <Picker />
       </body>
     </html>
