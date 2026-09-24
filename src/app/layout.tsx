@@ -22,7 +22,7 @@ import {
 import "./globals.css";
 import { site } from "@/lib/site";
 import { Footer } from "@/components/Footer";
-import { Picker, ThemeScript } from "@/components/Picker";
+import { Look, LookThemeScript } from "@/components/Look";
 import { StickyMobileBar } from "@/components/StickyMobileBar";
 
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], display: "swap" });
@@ -107,14 +107,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" data-theme="atelier" data-font="fraunces" data-logo="block" suppressHydrationWarning className={`${fontVars} h-full antialiased`}>
       <head>
-        <ThemeScript />
+        <LookThemeScript />
       </head>
       <body className="grain min-h-full">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
         <Footer />
         <StickyMobileBar />
-        <Picker />
+        <Look />
       </body>
     </html>
   );
