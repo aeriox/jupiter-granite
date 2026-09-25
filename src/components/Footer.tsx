@@ -18,14 +18,14 @@ export function Footer() {
 
           <div>
             <div className="eyebrow text-accent">Explore</div>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li><Link href="/" className="text-ondarkmuted hover:text-ondark">Home</Link></li>
+            <ul className="mt-4 space-y-2 text-sm max-md:space-y-0">
+              <li><Link href="/" className="inline-block text-ondarkmuted hover:text-ondark max-md:py-2.5">Home</Link></li>
               {nav.map((n) => (
                 <li key={n.href}>
-                  <Link href={n.href} className="text-ondarkmuted hover:text-ondark">{n.label}</Link>
+                  <Link href={n.href} className="inline-block text-ondarkmuted hover:text-ondark max-md:py-2.5">{n.label}</Link>
                 </li>
               ))}
-              <li><Link href="/contact" className="text-ondarkmuted hover:text-ondark">Contact & estimate</Link></li>
+              <li><Link href="/contact" className="inline-block text-ondarkmuted hover:text-ondark max-md:py-2.5">Contact & estimate</Link></li>
             </ul>
           </div>
 
@@ -33,8 +33,8 @@ export function Footer() {
             <div className="eyebrow text-accent">Visit</div>
             <address className="mt-4 space-y-2 text-sm not-italic text-ondarkmuted">
               <p>{site.address.street}<br />{site.address.city}, {site.address.state} {site.address.zip}</p>
-              <p><a href={site.phoneHref} className="hover:text-ondark">{site.phone}</a></p>
-              <p><a href={`mailto:${site.email}`} className="hover:text-ondark">{site.email}</a></p>
+              <p><a href={site.phoneHref} className="inline-block hover:text-ondark max-md:py-2">{site.phone}</a></p>
+              <p><a href={`mailto:${site.email}`} className="inline-block hover:text-ondark max-md:py-2">{site.email}</a></p>
               <p>{site.hours}</p>
             </address>
           </div>

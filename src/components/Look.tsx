@@ -200,7 +200,7 @@ export function Look() {
         onClick={() => setOpen((o) => !o)}
         aria-label="Look"
         aria-expanded={open}
-        className="look-toggle pointer-events-auto flex h-12 items-center justify-center rounded-full bg-fg px-4 text-[0.8rem] font-medium text-bg shadow-lg shadow-black/20"
+        className="look-toggle pointer-events-auto flex h-12 items-center justify-center rounded-full bg-fg px-4 text-[0.8rem] max-md:h-10 max-md:px-3.5 max-md:text-[0.75rem] font-medium text-bg shadow-lg shadow-black/20"
       >
         Look
       </button>

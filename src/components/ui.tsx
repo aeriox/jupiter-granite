@@ -83,7 +83,7 @@ export function CTA({ href, children, variant = "solid", onDark = false, externa
       )}
     </>
   );
-  const cls = `group inline-flex items-center gap-2 rounded-full text-sm font-medium transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] ${
+  const cls = `group inline-flex items-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] ${
     variant === "outline" ? "px-6 py-3" : "py-3 pl-6 pr-2.5"
   } ${styles[variant]}`;
 

@@ -269,11 +269,11 @@ body {
     position: fixed;
     left: 0; right: 0; bottom: 0;
     z-index: 70;
-    min-height: 3.35rem;
+    min-height: 3.5rem;
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: var(--fg, #161310);
-    color: var(--bg, #f3eee6);
-    border-top: 1px solid color-mix(in oklab, var(--bg, #f3eee6) 14%, transparent);
+    background: var(--color-dark);
+    color: var(--color-ondark);
+    border-top: 1px solid color-mix(in oklab, var(--color-ondark) 14%, transparent);
     box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
   }
   .sticky-mobile-estimate,
@@ -282,30 +282,42 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.55rem;
-    padding: 0.85rem 0.75rem;
+    padding: 0.7rem 0.75rem;
     text-decoration: none;
     color: inherit;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
   .sticky-mobile-call {
-    flex: 1.15;
-    background: var(--accent, #c4a574);
-    color: var(--onaccent, #161310);
-    border-left: 1px solid color-mix(in oklab, var(--bg, #f3eee6) 18%, transparent);
+    flex-direction: column;
+    gap: 0.1rem;
+    line-height: 1.15;
+    background: var(--color-accent);
+    color: var(--color-dark);
   }
+  .sticky-mobile-call-label { font-size: 0.62rem; opacity: 0.8; }
   .sticky-mobile-call-num {
-    opacity: 0.9;
+    font-size: 0.85rem;
     letter-spacing: 0.02em;
     text-transform: none;
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    font-weight: 700;
   }
-  html[data-picker-open="1"] .sticky-mobile-bar { display: none !important; }
-  body { padding-bottom: calc(3.6rem + env(safe-area-inset-bottom, 0px)); }
+  html[data-picker-open="1"] .sticky-mobile-bar,
+  html[data-menu-open="1"] .sticky-mobile-bar,
+  html[data-menu-open="1"] .look-picker { display: none !important; }
+  body { padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* === phone rhythm ===
+   Desktop section rhythm (7-8rem) reads as dead space on a 375px screen.
+   html[data-theme] outranks the per-theme [data-theme="…"] blocks. */
+@media (max-width: 767px) {
+  :root, html[data-theme] { --section-y: 4.5rem; }
+  .eyebrow { letter-spacing: 0.2em; }
 }
 
 html[data-switching] *, html[data-switching] *::before, html[data-switching] *::after { transition: none !important; animation: none !important; }

@@ -26,7 +26,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
 
-        <Shell className="relative pb-16 pt-32 sm:pb-24">
+        <Shell className="relative pb-28 pt-32 sm:pb-24">
           <div className="max-w-3xl">
             <Reveal eager><Eyebrow onDark>Jupiter · Palm Beach · Treasure Coast</Eyebrow></Reveal>
             <Reveal eager delay={80}>
@@ -210,7 +210,7 @@ export default function Home() {
           </Reveal>
         </Shell>
         <div className="mt-12">
-          <Shell><Gallery /></Shell>
+          <Shell><Gallery phoneLimit={6} /></Shell>
         </div>
       </section>
 
@@ -252,7 +252,7 @@ export default function Home() {
             <p className="mx-auto mt-6 max-w-xl text-lg text-ondarkmuted">
               Visit the showroom or send us your plans for a free, no-pressure estimate.
             </p>
-            <div className="mt-9 flex justify-center gap-3">
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
               <CTA href="/contact" variant="accent">Request your estimate</CTA>
               <CTA href={site.phoneHref} onDark variant="outline" external>Call {site.phone}</CTA>
             </div>

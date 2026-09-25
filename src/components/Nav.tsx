@@ -18,6 +18,8 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+    if (open) document.documentElement.dataset.menuOpen = "1";
+    else delete document.documentElement.dataset.menuOpen;
   }, [open]);
 
   const solid = scrolled || !overHero;
@@ -25,7 +27,7 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4">
       <nav
-        className={`pointer-events-auto mt-5 flex w-full max-w-6xl items-center justify-between rounded-full border px-4 py-2.5 pl-5 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+        className={`pointer-events-auto relative z-50 mt-5 flex w-full max-w-6xl items-center justify-between rounded-full border px-4 py-2.5 pl-5 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
           solid ? "border-white/10 bg-dark/80 backdrop-blur-xl" : "border-transparent bg-transparent"
         }`}
       >
@@ -61,7 +63,7 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 md:hidden"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 md:hidden"
           >
             <span className={`absolute h-px w-4 bg-ondark transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${open ? "rotate-45" : "-translate-y-1"}`} />
             <span className={`absolute h-px w-4 bg-ondark transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${open ? "-rotate-45" : "translate-y-1"}`} />

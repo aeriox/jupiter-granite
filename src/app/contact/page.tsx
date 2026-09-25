@@ -60,8 +60,8 @@ export default function Contact() {
                 </div>
                 <div className="rounded-[var(--radius-sm)] border border-line bg-surface p-5">
                   <div className="eyebrow text-faint">Email</div>
-                  <a href={`mailto:${site.email}`} className="mt-2 block text-sm hover:text-accent">{site.email}</a>
-                  <a href={`mailto:${site.ownerEmail}`} className="mt-1 block text-sm text-muted hover:text-accent">{site.ownerEmail}</a>
+                  <a href={`mailto:${site.email}`} className="mt-2 block text-sm hover:text-accent max-md:py-2">{site.email}</a>
+                  <a href={`mailto:${site.ownerEmail}`} className="mt-1 block text-sm text-muted hover:text-accent max-md:py-2">{site.ownerEmail}</a>
                 </div>
                 <div className="rounded-[var(--radius-sm)] border border-line bg-surface p-5">
                   <div className="eyebrow text-faint">Showroom</div>

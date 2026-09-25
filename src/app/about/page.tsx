@@ -166,11 +166,11 @@ export default function About() {
           </div>
 
           <Reveal delay={120} className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/10 pt-8">
-            <a href={site.phoneHref} className="group inline-flex items-center gap-2 text-ondark transition-colors hover:text-accent">
+            <a href={site.phoneHref} className="group inline-flex items-center gap-2 text-ondark transition-colors hover:text-accent max-md:py-2">
               <WaveMark className="h-4 w-4" />
               <span className="text-lg">{site.phone}</span>
             </a>
-            <a href={`mailto:${site.email}`} className="group inline-flex items-center gap-2 text-ondark transition-colors hover:text-accent">
+            <a href={`mailto:${site.email}`} className="group inline-flex items-center gap-2 text-ondark transition-colors hover:text-accent max-md:py-2">
               <WaveMark className="h-4 w-4" />
               <span className="text-lg">{site.email}</span>
             </a>
