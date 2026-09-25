@@ -68,7 +68,7 @@ export default function GalleryPage() {
             <p className="mx-auto mt-6 max-w-xl text-lg text-ondarkmuted">
               Send us your plans or visit the showroom for a free, no-pressure estimate.
             </p>
-            <div className="mt-9 flex justify-center gap-3">
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
               <CTA href="/contact" variant="accent">Get an estimate</CTA>
               <CTA href={site.phoneHref} onDark variant="outline" external>Call {site.phone}</CTA>
             </div>

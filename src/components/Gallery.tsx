@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { gallery } from "@/lib/site";
 
-export function Gallery({ bleed = false }: { bleed?: boolean }) {
+export function Gallery({ bleed = false, phoneLimit }: { bleed?: boolean; phoneLimit?: number }) {
   const [active, setActive] = useState<number | null>(null);
 
   const close = useCallback(() => setActive(null), []);
@@ -41,7 +41,7 @@ export function Gallery({ bleed = false }: { bleed?: boolean }) {
             aria-label={`View ${g.alt}`}
             className={`group relative overflow-hidden rounded-[var(--img-radius)] bg-surface2 ${
               "span" in g ? (g as { span?: string }).span ?? "" : ""
-            }`}
+            } ${phoneLimit !== undefined && i >= phoneLimit ? "max-md:hidden" : ""}`}
           >
             <Image
               src={g.src}
