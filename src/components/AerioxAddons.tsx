@@ -60,7 +60,7 @@ export function AerioxAddons() {
 
       <AerioxRoute />
       <Script src="/aeriox/voice-pill.js?v=voice-1" strategy="afterInteractive" />
-      <Script src="/aeriox/buy.js?v=buy-1" strategy="afterInteractive" />
+      <Script src="/aeriox/buy.js?v=buy-2" strategy="afterInteractive" />
     </>
   );
 }
