@@ -812,6 +812,11 @@ html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: 
   color: var(--color-fg);
 }
 @media (scripting: none) { #axc { display: none; } }
+/* Taps land on the launcher and the chat's panel, never on #axc's own box: while the launcher steps aside for
+   the home hero's buttons (.is-aside, voice-pill.js) the box stays where it was, and it must not swallow a
+   tap meant for "Get an estimate" underneath. */
+#axc { pointer-events: none; }
+#axc > * { pointer-events: auto; }
 /* The snippet hides the pill (display: none) while the launcher is on the page. Here the pill keeps its box
    instead, invisible and out of the tab order, so the call panel still opens above it exactly as before; and
    while the call panel is open (the launcher is gone then) the pill shows again, pressed in, as its anchor. */
@@ -836,8 +841,8 @@ body:has(#axc:not([hidden])) #vd:not(.is-open) .vd-pill { visibility: hidden; }
   #axc { --axc-right: auto; left: 1.25rem; }
 }
 /* 600-767px: the chat opens as a card (phones under 600px get its bottom sheet). The card is right-aligned
-   in #axc, so #axc spans the card's width from the launcher's left edge; taps pass through its empty part. */
+   in #axc, so #axc spans the card's width from the launcher's left edge; taps pass through its empty part
+   (#axc's pointer-events, above). */
 @media (min-width: 600px) and (max-width: 767px) {
-  #axc { width: min(380px, calc(100vw - 2.5rem)); pointer-events: none; }
-  #axc > * { pointer-events: auto; }
+  #axc { width: min(380px, calc(100vw - 2.5rem)); }
 }
