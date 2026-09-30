@@ -8,7 +8,7 @@ import { site, estimateSteps } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact & Estimate",
   description:
-    "Request a free estimate from Jupiter Granite Co. Visit the showroom at 952 Jupiter Park Lane, Jupiter, FL, or send your project details. Call (561) 352-6232.",
+    "Request an estimate from Jupiter Granite Co. Showroom by appointment at 952 Jupiter Park Lane, Suite 2, Jupiter, FL. Call (561) 352-6232.",
 };
 
 export default function Contact() {
@@ -25,8 +25,8 @@ export default function Contact() {
               Let&apos;s talk <span className="font-display-italic text-accent">stone.</span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted">
-              Estimates are free. Share a little about your project and we&apos;ll get right back to
-              you — or call the showroom and book an unhurried, one-on-one appointment.
+              Share a little about your project, or call the showroom to book an appointment,
+              Monday to Friday.
             </p>
           </Reveal>
 
@@ -54,7 +54,7 @@ export default function Contact() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-[var(--radius-sm)] border border-line bg-surface p-5">
-                  <div className="eyebrow text-faint">Call</div>
+                  <div className="eyebrow text-faint">Showroom &amp; estimating</div>
                   <a href={site.phoneHref} className="mt-2 block font-display text-xl hover:text-accent">{site.phone}</a>
                   <p className="mt-1 text-xs text-faint">Fax {site.fax}</p>
                 </div>
@@ -74,7 +74,7 @@ export default function Contact() {
               </div>
 
               <div className="rounded-[var(--radius-sm)] border border-line bg-surface p-5">
-                <div className="eyebrow text-faint">Ask for</div>
+                <div className="eyebrow text-faint">Contacts</div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {site.contacts.map((c) => (
                     <span key={c.name} className="rounded-full border border-line px-3 py-1.5 text-xs text-muted">
@@ -97,12 +97,11 @@ export default function Contact() {
               Slab warehouse, showroom &amp; fabrication shop
             </h2>
             <p className="mt-6 max-w-md text-lg text-ondarkmuted">
-              All under one roof on Jupiter Park Lane. Stop in by appointment to walk the slabs and
-              meet the team.
+              952 Jupiter Park Lane, Suite 2. Showroom visits Monday to Friday, by appointment.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <CTA href={site.mapsUrl} variant="accent" external>Get directions</CTA>
-              <CTA href={site.phoneHref} onDark variant="outline" external>Call {site.phone}</CTA>
+              <CTA href={site.phoneHref} onDark variant="outline" external>Call the showroom</CTA>
             </div>
           </Reveal>
           <Reveal delay={120} className="min-h-[22rem]">

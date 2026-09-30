@@ -1,6 +1,6 @@
 # Jupiter Granite Co. — Website
 
-Marketing site for [Jupiter Granite Co.](https://maps.google.com/?q=Jupiter+Granite+Co), a third-generation custom stone fabricator in Jupiter, FL (granite, quartzite, marble, quartz, porcelain & semi-precious surfaces).
+Marketing site for [Jupiter Granite Co.](https://jupitergranite.com), a custom stone fabricator in Jupiter, FL (granite, marble, onyx, quartz & semi-precious gem stones).
 
 ## Stack
 
@@ -25,19 +25,20 @@ src/
     layout.tsx     # fonts, SEO metadata, LocalBusiness JSON-LD
     page.tsx       # all page sections
     globals.css    # design tokens + animations
-    icon.svg       # favicon (wave mark)
+    icon.png       # favicon (their own logo, from their Facebook page)
   components/
     Nav.tsx        # floating glass nav + mobile overlay
     Gallery.tsx    # bento grid + lightbox
     Reveal.tsx     # IntersectionObserver scroll reveals
-    Logo.tsx       # SVG wave mark + wordmark
+    Logo.tsx       # SVG facet mark + wordmark
   lib/
-    site.ts        # business info, materials, gallery, reviews
-public/img/        # curated project photography
+    site.ts        # business info, materials, services, gallery
+public/img/        # their own project photography
 ```
 
 ## Content notes
 
-Business details, project photography and customer reviews were sourced from Jupiter
-Granite Co.'s public Google Business Profile. Update copy and imagery in `src/lib/site.ts`
-and `public/img/` as needed.
+Copy and facts come from Jupiter Granite Co.'s own site (jupitergranite.com) and their
+Facebook page. Every photo in `public/img/` is from their own site and photo albums, with
+their captions as alt text. No Google data (ratings, reviews, photos, maps) is used. Update
+copy and imagery in `src/lib/site.ts` and `public/img/` as needed.

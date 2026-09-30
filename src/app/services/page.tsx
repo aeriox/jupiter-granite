@@ -10,21 +10,24 @@ export const metadata = { title: "Services" };
 const stories = [
   {
     tag: "3-D Renderings",
-    title: "Clarence Clemons’ “Blue Louise”",
-    body: "For the late E Street Band saxophonist, we vein-matched nine slabs of Blue Louise quartzite from a single 3-D rendering — every seam flowing as one continuous river of stone.",
-    img: "/img/install-template.jpg",
+    title: "Clarence Clemons’ “Blue Luis”",
+    body: "This project for legendary saxophonist Clarence Clemons required vein matching of 9 slabs of Blue Luis.",
+    img: "/img/story-blue-luis-slab.jpg",
+    alt: "Blue Luis slab from the Clarence Clemons project",
   },
   {
     tag: "Marine Applications",
     title: "The Lazzara “Maggie”",
-    body: "Aboard the Lazzara yacht “Maggie,” we milled HanStone quartz down to 8mm to match the original floor exactly — honeycomb-backed where every pound of weight mattered.",
-    img: "/img/mat-quartzite.jpg",
+    body: "On the Lazzara vessel “Maggie” we replaced the wood flooring with HanStone quartz slabs which we milled to 8mm to match the previous floor’s thickness.",
+    img: "/img/story-lazzara-maggie.jpg",
+    alt: "The Lazzara vessel “Maggie” at the dock",
   },
   {
     tag: "Sinks & Faucets",
-    title: "A ten-year-old clam shell",
-    body: "A client kept a giant clam shell for a decade waiting for the right home. We hollowed, sealed and plumbed it into a one-of-a-kind vessel sink no catalog could ever offer.",
-    img: "/img/detail-sink2.jpg",
+    title: "A giant clam shell sink",
+    body: "Our client had been holding on to this giant clam shell for over 10 years. We were able to turn it into a vessel sink and mount it to the Shell Stone top for her.",
+    img: "/img/story-clam-shell-sink.jpg",
+    alt: "Giant clam shell vessel sink",
   },
 ];
 
@@ -44,9 +47,9 @@ export default function ServicesPage() {
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">
-              Full-service stone — from custom commissions and summer kitchens to marine work,
-              restoration, sinks and 3-D renderings. Every project leaves our shop finished by hand
-              and guaranteed for life.
+              We are your full service stone professionals! Custom work, summer kitchens,
+              fireplaces and columns, marine applications, repair and restoration, sinks and 3-D
+              renderings. In fact, we guarantee all of our work for life!
             </p>
           </Reveal>
         </Shell>
@@ -57,7 +60,12 @@ export default function ServicesPage() {
         <Shell>
           <div className="grid gap-[var(--gallery-gap)] sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s, i) => (
-              <Reveal key={s.slug} delay={(i % 3) * 90}>
+              <Reveal
+                key={s.slug}
+                delay={(i % 3) * 90}
+                // Seven cards: spans keep both the 2- and 3-column grids free of holes.
+                className={i === 0 || i === 5 ? "lg:col-span-2" : i === 6 ? "sm:col-span-2 lg:col-span-1" : ""}
+              >
                 <article
                   id={s.slug}
                   className="group flex h-full scroll-mt-24 flex-col overflow-hidden rounded-[var(--radius-sm)] border border-line bg-surface"
@@ -65,7 +73,7 @@ export default function ServicesPage() {
                   <div className="relative h-56 overflow-hidden rounded-[var(--img-radius)]">
                     <Image
                       src={s.img}
-                      alt={s.name}
+                      alt={s.alt}
                       fill
                       sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.07]"
@@ -89,12 +97,11 @@ export default function ServicesPage() {
           <Reveal className="max-w-2xl">
             <Eyebrow onDark>Signature stories</Eyebrow>
             <h2 className="mt-6 font-display text-[clamp(2rem,4.5vw,3.4rem)] leading-[1.05] text-ondark">
-              When the brief is{" "}
-              <span className="font-display-italic text-accent">impossible</span>
+              Signature{" "}
+              <span className="font-display-italic text-accent">projects</span>
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-ondarkmuted">
-              A few of the commissions clients still talk about — proof that if it can be cut, set or
-              shaped from stone, we have probably already done it.
+              A few projects from our pages. Jupiter Granite will bring your idea to reality.
             </p>
           </Reveal>
 
@@ -105,7 +112,7 @@ export default function ServicesPage() {
                   <div className="relative h-48 overflow-hidden rounded-[var(--img-radius)] ring-1 ring-white/10">
                     <Image
                       src={st.img}
-                      alt={st.title}
+                      alt={st.alt}
                       fill
                       sizes="(max-width:1024px) 100vw, 33vw"
                       className="object-cover"

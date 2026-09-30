@@ -56,10 +56,10 @@ export async function POST(req: Request) {
       <p style="white-space:pre-wrap;line-height:1.5">${esc(data.message || "—")}</p>
     </div>`;
 
-  // If no provider key is configured yet, tell the client to use the mailto fallback.
+  // No provider key: tell the client to use the mailto fallback.
   if (!key) {
     return NextResponse.json(
-      { ok: false, unconfigured: true, error: "Email delivery isn't configured yet." },
+      { ok: false, unconfigured: true, error: "We couldn't send that. Please call (561) 352-6232 or email info@jupitergranite.com." },
       { status: 503 }
     );
   }
@@ -79,11 +79,11 @@ export async function POST(req: Request) {
     if (!res.ok) {
       const detail = await res.text();
       console.error("Resend error", res.status, detail);
-      return NextResponse.json({ ok: false, error: "We couldn't send that just now." }, { status: 502 });
+      return NextResponse.json({ ok: false, error: "We couldn't send that. Please call (561) 352-6232 or email info@jupitergranite.com." }, { status: 502 });
     }
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ ok: false, error: "We couldn't send that just now." }, { status: 502 });
+    return NextResponse.json({ ok: false, error: "We couldn't send that. Please call (561) 352-6232 or email info@jupitergranite.com." }, { status: 502 });
   }
 }

@@ -33,18 +33,6 @@ export function Eyebrow({
   );
 }
 
-export function Stars({ className = "" }: { className?: string }) {
-  return (
-    <span className={`inline-flex gap-0.5 ${className}`} aria-hidden>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-accent">
-          <path d="M10 1.5l2.47 5.01 5.53.8-4 3.9.94 5.5L10 14.1l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" />
-        </svg>
-      ))}
-    </span>
-  );
-}
-
 type CTAProps = {
   href: string;
   children: React.ReactNode;

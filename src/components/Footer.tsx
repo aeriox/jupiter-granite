@@ -11,8 +11,8 @@ export function Footer() {
           <div>
             <Wordmark onDark />
             <p className="mt-5 max-w-xs text-sm text-ondarkmuted">
-              Third-generation custom stone fabrication on Florida&apos;s Treasure Coast —
-              granite, marble, quartz and semi-precious surfaces, guaranteed for life.
+              Granite, marble, quartz and semi-precious gem stones. Jupiter - Palm Beach - South
+              Florida. We guarantee all of our work for life!
             </p>
           </div>
 
@@ -33,16 +33,17 @@ export function Footer() {
             <div className="eyebrow text-accent">Visit</div>
             <address className="mt-4 space-y-2 text-sm not-italic text-ondarkmuted">
               <p>{site.address.street}<br />{site.address.city}, {site.address.state} {site.address.zip}</p>
-              <p><a href={site.phoneHref} className="inline-block hover:text-ondark max-md:py-2">{site.phone}</a></p>
+              <p><a href={site.phoneHref} className="inline-block hover:text-ondark max-md:py-2">{site.phone}</a><br /><span className="text-xs">{site.phoneLabel}</span></p>
               <p><a href={`mailto:${site.email}`} className="inline-block hover:text-ondark max-md:py-2">{site.email}</a></p>
               <p>{site.hours}</p>
+              <p><a href={site.facebook} target="_blank" rel="noopener noreferrer" className="inline-block hover:text-ondark max-md:py-2">Facebook</a></p>
             </address>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-ondarkmuted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {site.name}. All rights reserved. · License {site.license}</p>
-          <p>Family-owned · Serving Jupiter &amp; all of Palm Beach County</p>
+          <p>© {new Date().getFullYear()} Jupiter Granite Co. All rights reserved. · Palm Beach County Contractor License # {site.license}</p>
+          <p>Jupiter - Palm Beach - South Florida</p>
         </div>
       </Shell>
     </footer>

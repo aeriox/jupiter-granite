@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Wordmark } from "./Logo";
-import { nav, site } from "@/lib/site";
+import { nav } from "@/lib/site";
 
 export function Nav({ overHero = false }: { overHero?: boolean }) {
   const [open, setOpen] = useState(false);

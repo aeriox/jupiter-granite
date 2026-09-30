@@ -1,7 +1,7 @@
 import { Nav } from "@/components/Nav";
 import { Reveal } from "@/components/Reveal";
 import { Gallery } from "@/components/Gallery";
-import { Shell, Eyebrow, Stars, CTA } from "@/components/ui";
+import { Shell, Eyebrow, CTA } from "@/components/ui";
 import { site } from "@/lib/site";
 
 export const metadata = { title: "Gallery" };
@@ -23,20 +23,13 @@ export default function GalleryPage() {
             </Reveal>
             <Reveal delay={160}>
               <p className="mt-7 text-lg leading-relaxed text-muted">
-                A selection of recent installations across Jupiter, Palm Beach Gardens and the
-                wider Treasure Coast — every photo an actual job fabricated and installed by
-                Jupiter Granite Co.
+                Granite, marble and quartz jobs from our own photo albums. All photos are actual
+                jobs fabricated and installed by Jupiter Granite Co. Jupiter - Palm Beach - South
+                Florida.
               </p>
             </Reveal>
             <Reveal delay={240}>
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                <span className="flex items-center gap-2">
-                  <span className="font-display text-2xl">{site.rating}</span>
-                  <Stars />
-                  <span className="text-muted">across {site.reviewCount} reviews</span>
-                </span>
-                <span className="text-faint">Tap any image to enlarge.</span>
-              </div>
+              <p className="mt-8 text-sm text-faint">Tap any image to enlarge.</p>
             </Reveal>
           </div>
         </Shell>
@@ -47,7 +40,7 @@ export default function GalleryPage() {
         <Shell>
           <Reveal>
             <p className="mb-10 max-w-xl text-sm leading-relaxed text-faint">
-              This is a living portfolio — new installations are added regularly.
+              Captions are the stone names from our own albums.
             </p>
           </Reveal>
         </Shell>
@@ -66,11 +59,11 @@ export default function GalleryPage() {
               Ready to see your space <span className="font-display-italic text-accent">in stone?</span>
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg text-ondarkmuted">
-              Send us your plans or visit the showroom for a free, no-pressure estimate.
+              Send us your plans, or book a showroom visit, for an estimate.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <CTA href="/contact" variant="accent">Get an estimate</CTA>
-              <CTA href={site.phoneHref} onDark variant="outline" external>Call {site.phone}</CTA>
+              <CTA href={site.phoneHref} onDark variant="outline" external>Call the showroom {site.phone}</CTA>
             </div>
           </Reveal>
         </Shell>
