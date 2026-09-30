@@ -191,6 +191,23 @@ export function Look() {
                 </button>
               </div>
             )}
+
+            {/* AERIOX add-on: the buy panel (public/aeriox/buy.js) takes this look with the order */}
+            <button
+              type="button"
+              data-buy-open
+              aria-haspopup="dialog"
+              aria-controls="buy-panel"
+              className="look-buy group mt-4 flex min-h-11 w-full items-center justify-between gap-3 rounded-full bg-fg py-1.5 pl-4 pr-1.5 text-left text-[0.8rem] font-medium text-bg"
+            >
+              <span>Buy this site with this look</span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-[1px]" aria-hidden="true">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </button>
+            <p className="look-buy-note mt-2 text-[0.72rem] text-muted">Your picks go with your order.</p>
           </div>
         </div>
       )}

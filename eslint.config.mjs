@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // AERIOX add-on scripts: plain browser scripts served as they are (ported from the original Canino site).
+    "public/aeriox/**",
   ]),
 ]);
 
