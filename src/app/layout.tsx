@@ -49,28 +49,36 @@ const fontVars = [fraunces, jakarta, cormorant, mulish, space, sora, playfair, m
   .map((f) => f.variable)
   .join(" ");
 
+// Preview host: the og/JSON-LD image paths exist here, not on jupitergranite.com.
+const PREVIEW_HOST = "https://jupiter-granite.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://jupitergranite.com"),
+  metadataBase: new URL(PREVIEW_HOST),
   title: {
     default: "Jupiter Granite Co. — Custom Stone Countertops in Jupiter, FL",
     template: "%s · Jupiter Granite Co.",
   },
   description:
-    "Three generations of master stone craftsmanship on Florida's Treasure Coast. Custom granite, quartzite, marble, quartz & semi-precious surfaces — laser-templated, 5-axis fabricated, guaranteed for life. Rated 4.9★ across 190 Google reviews.",
+    "Jupiter Granite Co. offers the best selection of granite, marble, onyx and quartz surfaces. Laser templating and CNC fabrication means we get it perfect every time. In fact, we guarantee all of our work for life!",
   keywords: [
-    "granite countertops Jupiter FL",
-    "quartz countertops Palm Beach",
-    "marble fabrication Jupiter",
-    "semi-precious gem surfaces",
-    "Cambria dealer Jupiter",
-    "custom stone countertops Florida",
+    "granite",
+    "countertops",
+    "marble",
+    "granite countertops",
+    "vanity tops",
+    "onyx",
+    "quartz",
+    "Jupiter, FL",
+    "kitchen",
+    "bathroom",
+    "fireplaces",
   ],
   openGraph: {
     title: "Jupiter Granite Co. — Custom Stone Countertops in Jupiter, FL",
-    description: "Master stone craftsmanship since 2000. Granite, marble, quartz & semi-precious — guaranteed for life.",
+    description: "Granite, marble, onyx and quartz surfaces. In fact, we guarantee all of our work for life!",
     type: "website",
     locale: "en_US",
-    images: ["/img/k-calacatta-waterfall.jpg"],
+    images: [{ url: "/img/og.jpg", width: 1200, height: 630, alt: "Juparana Crema Bordeaux granite kitchen island by Jupiter Granite Co." }],
   },
   icons: { icon: "/icon.png" },
 };
@@ -79,12 +87,10 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "HomeAndConstructionBusiness",
   name: site.name,
-  image: "https://jupitergranite.com/img/storefront.jpg",
+  image: `${PREVIEW_HOST}/img/og.jpg`,
   telephone: site.phone,
   email: site.email,
   url: "https://jupitergranite.com",
-  priceRange: "$$$",
-  foundingDate: String(site.established),
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,
@@ -93,15 +99,12 @@ const jsonLd = {
     postalCode: site.address.zip,
     addressCountry: "US",
   },
-  geo: { "@type": "GeoCoordinates", latitude: 26.9254366, longitude: -80.144471 },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     opens: "09:00",
     closes: "17:00",
   },
-  aggregateRating: { "@type": "AggregateRating", ratingValue: site.rating, reviewCount: site.reviewCount },
-  areaServed: "Palm Beach County, FL",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -3,16 +3,13 @@
 export function WaveMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true" fill="none">
-      <defs>
-        <linearGradient id="jg-wave" x1="12" y1="8" x2="52" y2="56" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#46c0ef" />
-          <stop offset="1" stopColor="#1a6e97" />
-        </linearGradient>
-      </defs>
+      {/* A cut-stone facet. (The old wave glyph traced a logo found through Google that
+          is not theirs, so it is gone. A solid accent stroke: a shared gradient id broke
+          whenever its first copy sat in a hidden logo option.) */}
       <path
-        d="M32 6c14.36 0 26 11.64 26 26S46.36 58 32 58c-9.2 0-16-5.4-16-13.2 0-6.7 5-11.6 11.6-11.6 5 0 8.7 3.2 8.7 7.7 0 3.3-2.2 5.7-5.3 5.7-2.2 0-3.8-1.3-3.8-3.3"
-        stroke="url(#jg-wave)"
-        strokeWidth="6.4"
+        d="M20 10h24l12 14-24 30L8 24zM8 24h48M26 10l-4 14 10 30 10-30-4-14"
+        stroke="var(--color-accent)"
+        strokeWidth="4.4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -42,7 +39,7 @@ export function Wordmark({
             Jupiter Granite
           </span>
           <span className={`eyebrow mt-1 block text-[0.5rem] ${onDark ? "text-ondarkmuted" : "text-faint"}`}>
-            Est. 2000 · Jupiter, FL
+            Jupiter, FL
           </span>
         </span>
       </span>

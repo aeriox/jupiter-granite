@@ -7,21 +7,20 @@ import { shopTech } from "@/lib/site";
 export const metadata = { title: "Technology" };
 
 const processSteps = [
-  { n: "01", t: "Design & 3-D rendering", d: "CAD/CAM layout and photoreal renderings so you approve the finished room before a single slab is cut." },
-  { n: "02", t: "Digital laser templating", d: "On-site laser templating since 2007 — your space captured to the millimeter, no wood sticks or guesswork." },
-  { n: "03", t: "CNC fabrication & hand finish", d: "5-axis cutting handles the geometry; our craftsmen finish every edge, miter and polish by hand." },
-  { n: "04", t: "White-glove installation", d: "Slabs set with vacuum lifters and invisible seams — sealed, guaranteed for life and ready to use." },
+  { n: "01", t: "CAD & CAM Design", d: "State of the art design software. See EXACTLY what the finished layout will look like before we cut it!" },
+  { n: "02", t: "Laser Templating since 2007", d: "No wood sticks and hot glue. The template, pictures and customer’s signature go back to the shop from the field." },
+  { n: "03", t: "5 Axis CNC Cutting", d: "The Denver Skema Logic C-180 CNC bridge saw can cut an entire kitchen automatically." },
+  { n: "04", t: "Material Handling & Seam Setting", d: "Slabs up to 2,200 lbs lifted by vacuum. We guarantee our seams will never settle or crack." },
 ];
 
 const credentials = [
   { n: "Since 2007", l: "Laser templating" },
-  { n: "2,200 lbs", l: "Slabs handled with ease" },
-  { n: "± mm", l: "Cut tolerance" },
-  { n: "For life", l: "Workmanship guaranteed" },
+  { n: "2,200 lbs", l: "Slabs lifted by vacuum" },
+  { n: "For life", l: "All of our work guaranteed" },
 ];
 
 export default function Technology() {
-  const featured = shopTech.find((t) => t.name.includes("saw-waterjet"));
+  const featured = shopTech.find((t) => t.name.includes("saw-water jet"));
   const splits = shopTech.filter((t) => t !== featured);
 
   return (
@@ -37,12 +36,12 @@ export default function Technology() {
               We love <span className="font-display-italic text-accent">technology.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">
-              Jupiter Granite runs one of the most advanced fabrication shops anywhere — every
-              machine in service of a more perfect, more repeatable result.
+              At Jupiter Granite Co. we boast the most efficient and technologically advanced
+              fabrication shop around.
             </p>
           </Reveal>
 
-          <Reveal delay={140} className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Reveal delay={140} className="mt-12 grid grid-cols-1 gap-3 min-[420px]:grid-cols-3">
             {credentials.map((c) => (
               <div key={c.l} className="rounded-[var(--radius-sm)] border border-line bg-surface p-5">
                 <div className="font-display text-2xl text-accent">{c.n}</div>
@@ -66,7 +65,7 @@ export default function Technology() {
               >
                 <Image
                   src={item.img}
-                  alt={item.name}
+                  alt={item.alt}
                   fill
                   sizes="(max-width:1024px) 100vw, 45vw"
                   className="object-cover"
@@ -94,7 +93,7 @@ export default function Technology() {
             <Reveal className="relative h-[34rem] overflow-hidden rounded-[var(--radius)] border border-line">
               <Image
                 src={featured.img}
-                alt={featured.name}
+                alt={featured.alt}
                 fill
                 sizes="(max-width:1280px) 100vw, var(--shell)"
                 className="object-cover"
@@ -125,7 +124,7 @@ export default function Technology() {
           <Reveal className="max-w-2xl">
             <Eyebrow>The process</Eyebrow>
             <h2 className="mt-5 font-display text-[clamp(2rem,4.5vw,3.4rem)] leading-[1.05]">
-              Four steps, <span className="font-display-italic text-accent2">no surprises.</span>
+              From template <span className="font-display-italic text-accent2">to install.</span>
             </h2>
           </Reveal>
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -151,7 +150,7 @@ export default function Technology() {
               Precision you can <span className="font-display-italic text-accent">feel.</span>
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg text-ondarkmuted">
-              Bring us your plans and let the shop go to work — sealed, guaranteed and finished by hand.
+              Bring us your plans. We guarantee all of our work for life!
             </p>
             <div className="mt-9 flex justify-center">
               <CTA href="/contact" variant="accent">Get an estimate</CTA>

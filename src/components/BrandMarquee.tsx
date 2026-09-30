@@ -13,7 +13,7 @@ const brands = [
 // and enough of them that one half always exceeds the viewport (no gap).
 const COPIES = 8;
 
-export function BrandMarquee({ label = "The quartz brands we carry & fabricate" }: { label?: string }) {
+export function BrandMarquee({ label = "Quartz surfaces by" }: { label?: string }) {
   return (
     <section className="overflow-hidden border-y border-black/5 bg-[#f4f1ea] py-7">
       {label && (

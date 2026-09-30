@@ -23,9 +23,8 @@ export default function MaterialsPage() {
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">
-              Granite, marble, fine quartz and semi-precious gem stones — every slab is selected,
-              cut and finished in-house on our 5-axis machinery, then set by hand. Whatever the
-              material, the standard is the same.
+              Granite, marble, fine quartz and semi-precious gem stones. Laser templating, water-jet
+              and CNC fabrication means we get it perfect every time.
             </p>
           </Reveal>
         </Shell>
@@ -55,7 +54,7 @@ export default function MaterialsPage() {
               >
                 <Image
                   src={m.img}
-                  alt={m.name}
+                  alt={m.alt}
                   fill
                   sizes="(max-width:1024px) 100vw, 45vw"
                   className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-[1.04]"
@@ -91,16 +90,16 @@ export default function MaterialsPage() {
 
                 {/* SWATCHES */}
                 <div className="mt-8 grid grid-cols-4 gap-[var(--gallery-gap)]">
-                  {m.swatches.map((s, si) => (
+                  {m.swatches.map((s) => (
                     <div
-                      key={s}
+                      key={s.src}
                       className={`relative h-24 overflow-hidden rounded-[var(--img-radius)] ${
                         dark ? "ring-1 ring-white/10" : "border border-line"
                       }`}
                     >
                       <Image
-                        src={s}
-                        alt={`${m.name} sample ${si + 1}`}
+                        src={s.src}
+                        alt={s.alt}
                         fill
                         sizes="(max-width:1024px) 22vw, 11vw"
                         className="object-cover"
@@ -139,8 +138,8 @@ export default function MaterialsPage() {
               <span className="font-display-italic text-accent">yours.</span>
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg text-ondarkmuted">
-              Visit the showroom to see full slabs in person, or send us your plans for a free,
-              no-pressure estimate.
+              Book a showroom visit to see full slabs in person, or send us your plans for an
+              estimate.
             </p>
             <div className="mt-9 flex justify-center">
               <CTA href="/contact" variant="accent">

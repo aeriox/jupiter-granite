@@ -2,16 +2,16 @@ import Image from "next/image";
 import { Nav } from "@/components/Nav";
 import { Reveal } from "@/components/Reveal";
 import { WaveMark } from "@/components/Logo";
-import { Shell, Eyebrow, CTA, SectionHead, Stars } from "@/components/ui";
-import { site, reviews } from "@/lib/site";
+import { Shell, Eyebrow, CTA, SectionHead } from "@/components/ui";
+import { site } from "@/lib/site";
 
 export const metadata = { title: "About" };
 
 const credentials = [
-  { n: "Since 2000", l: "Family-owned and operated in Jupiter" },
-  { n: "3rd-Gen", l: "Master craftsmanship, hand-finished" },
-  { n: "Lifetime", l: "Workmanship guarantee on every install" },
-  { n: "Cambria", l: "Authorized seller & certified fabricator" },
+  { n: "3rd-Gen", l: "Jason Demick, master craftsman" },
+  { n: "For life", l: "We guarantee all of our work" },
+  { n: "Certified", l: "Quartz fabricators and installers" },
+  { n: site.license, l: "Palm Beach County contractor license" },
 ];
 
 export default function About() {
@@ -25,15 +25,14 @@ export default function About() {
           <Reveal>
             <Eyebrow>Our studio</Eyebrow>
             <h1 className="mt-6 max-w-4xl font-display text-[clamp(2.75rem,7vw,5.5rem)] leading-[0.97]">
-              Built on family,{" "}
-              <span className="font-display-italic text-accent">finished by hand.</span>
+              Owner Jason Demick,{" "}
+              <span className="font-display-italic text-accent">3rd generation master craftsman.</span>
             </h1>
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted">
-              Jupiter Granite Co. is a family business — a stone studio where every slab
-              is chosen, cut and finished by people who&apos;ve been shaping granite, quartzite and
-              marble for three generations. We measure success one home at a time.
+              Jason is a Jupiter native. His experience combined with a state of the art stone
+              fabrication facility insures every job receives the highest level of quality.
             </p>
           </Reveal>
         </Shell>
@@ -45,8 +44,8 @@ export default function About() {
           <Reveal className="relative">
             <div className="relative h-[30rem] overflow-hidden rounded-[var(--img-radius)] border border-line sm:h-[36rem]">
               <Image
-                src="/img/storefront.jpg"
-                alt="The Jupiter Granite Co. showroom on Jupiter Park Lane"
+                src="/img/shop-crane-slab.jpg"
+                alt="A slab on the overhead crane in our fabrication shop"
                 fill
                 sizes="(max-width:1024px) 100vw, 45vw"
                 className="object-cover"
@@ -60,7 +59,7 @@ export default function About() {
                   <WaveMark className="h-5 w-5" />
                   <span className="font-display text-lg">3rd Generation</span>
                 </div>
-                <p className="mt-1 text-xs text-faint">Family business · Est. {site.established}</p>
+                <p className="mt-1 text-xs text-faint">Jason Demick, master craftsman</p>
               </div>
             </div>
           </Reveal>
@@ -68,26 +67,21 @@ export default function About() {
           <Reveal delay={120}>
             <Eyebrow>The story</Eyebrow>
             <h2 className="mt-5 font-display text-[clamp(2rem,4.5vw,3.4rem)] leading-[1.05]">
-              A showroom where the whole room{" "}
-              <span className="font-display-italic text-accent2">comes together.</span>
+              A state of the art stone{" "}
+              <span className="font-display-italic text-accent2">fabrication facility.</span>
             </h2>
             <div className="mt-6 space-y-5 text-lg leading-relaxed text-muted">
               <p>
-                Founded in {site.established} and led by Jupiter native {site.owner} — a
-                third-generation master craftsman holding Palm Beach County contractor license{" "}
-                {site.license} — Jupiter Granite grew from a family trade into one of the Treasure
-                Coast&apos;s most trusted stone studios. That craftsmanship shows in how we treat
-                every client and every project.
+                Palm Beach County Contractor License # {site.license}. Laser templating, water-jet
+                and CNC fabrication means we get it perfect every time.
               </p>
               <p>
-                Our showroom at 952 Jupiter Park Lane displays full slabs alongside cabinetry, tile,
-                sinks and fixtures, so you can design the entire space in a single visit — seeing how
-                the stone, the wood and the hardware will live together before anything is cut.
+                Our slab warehouse, showroom and fabrication shop are at {site.address.street},
+                Jupiter. We also offer a huge variety of standard and designer sinks and faucets for
+                your kitchen and bath project.
               </p>
               <p>
-                Every installation is backed by a lifetime workmanship guarantee, and we accept all
-                major credit cards. The promise is simple: when our craftsmen finish, it&apos;s right
-                — and it stays right.
+                We guarantee all of our work for life! We accept all major credit cards!
               </p>
             </div>
           </Reveal>
@@ -112,21 +106,6 @@ export default function About() {
         </Shell>
       </section>
 
-      {/* REVIEW PULL-QUOTE */}
-      <section className="bg-surface2 py-[var(--section-y)]">
-        <Shell>
-          <Reveal className="mx-auto max-w-3xl text-center">
-            <Stars className="justify-center" />
-            <blockquote className="mt-6 font-display text-[clamp(1.5rem,3.5vw,2.4rem)] leading-[1.2]">
-              &ldquo;{reviews[0].quote}&rdquo;
-            </blockquote>
-            <figcaption className="mt-6 text-sm text-faint">
-              {reviews[0].name} · {reviews[0].meta}
-            </figcaption>
-          </Reveal>
-        </Shell>
-      </section>
-
       {/* MEET THE TEAM */}
       <section className="bg-dark py-[var(--section-y)] text-ondark">
         <Shell>
@@ -138,7 +117,7 @@ export default function About() {
                   The people behind the <span className="font-display-italic text-accent">stone</span>
                 </span>
               }
-              intro="Family-run means the people who answer the phone are the people who finish the edge. Stop in, call, or email — we'll guide you from first sketch to final polish."
+              intro="Showroom appointments and estimating: (561) 352-6232. Owner Jason Demick: jason@jupitergranite.com."
               onDark
             />
           </Reveal>
@@ -185,14 +164,14 @@ export default function About() {
           <Reveal>
             <Eyebrow onDark>Come see the slabs</Eyebrow>
             <h2 className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2.2rem,5vw,3.8rem)] leading-[1] text-ondark">
-              Design your whole space in{" "}
-              <span className="font-display-italic text-accent">one visit.</span>
+              Slab warehouse, showroom{" "}
+              <span className="font-display-italic text-accent">&amp; fabrication shop</span>
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg text-ondarkmuted">
-              Full slabs, cabinetry, tile and fixtures — all under one roof at {site.address.street}.
+              {site.address.street}. Monday to Friday, by appointment.
             </p>
             <div className="mt-9 flex justify-center">
-              <CTA href="/contact" variant="accent">Visit the showroom</CTA>
+              <CTA href="/contact" variant="accent">Book a showroom visit</CTA>
             </div>
           </Reveal>
         </Shell>

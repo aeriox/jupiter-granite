@@ -63,6 +63,8 @@ export function Look() {
       }
       const parsed = JSON.parse(raw);
       const next = Object.assign(cloneValues(lookConfig.DEFAULTS), parsed) as LookValues;
+      // Restores the saved look once after mount (pre-existing pattern).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setValues(next);
       setPresetId(parsed.presetId || matchPresetId(next, presets));
       applyDom(next);

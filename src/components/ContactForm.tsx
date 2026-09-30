@@ -93,7 +93,7 @@ export function ContactForm() {
               <option>Fine Quartz</option>
               <option>Quartzite</option>
               <option>Semi-Precious Gem Stone</option>
-              <option>Not sure yet</option>
+              <option>Not sure</option>
             </select>
           </label>
           <label className="block">

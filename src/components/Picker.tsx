@@ -21,6 +21,8 @@ export function Picker() {
   const [mode, setMode] = useState<ModeId | null>(null);
 
   useEffect(() => {
+    // Reads localStorage once after mount (pre-existing pattern; lint rule is new in React 19).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme((localStorage.getItem(THEME_KEY) as ThemeId) || DEFAULT_THEME);
     setFont((localStorage.getItem(FONT_KEY) as FontId) || DEFAULT_FONT);
     setLogo((localStorage.getItem(LOGO_KEY) as LogoId) || DEFAULT_LOGO);
@@ -42,21 +44,25 @@ export function Picker() {
 
   function applyTheme(id: ThemeId) {
     setTheme(id);
+    // eslint-disable-next-line react-hooks/immutability
     document.documentElement.dataset.theme = id;
     localStorage.setItem(THEME_KEY, id);
   }
   function applyFont(id: FontId) {
     setFont(id);
+    // eslint-disable-next-line react-hooks/immutability
     document.documentElement.dataset.font = id;
     localStorage.setItem(FONT_KEY, id);
   }
   function applyLogo(id: LogoId) {
     setLogo(id);
+    // eslint-disable-next-line react-hooks/immutability
     document.documentElement.dataset.logo = id;
     localStorage.setItem(LOGO_KEY, id);
   }
   function applyMode(m: ModeId) {
     setMode(m);
+    // eslint-disable-next-line react-hooks/immutability
     document.documentElement.dataset.mode = m;
     localStorage.setItem(MODE_KEY, m);
   }
