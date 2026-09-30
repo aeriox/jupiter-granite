@@ -1,15 +1,20 @@
 /* Buy this site: the purchase panel on the original Jupiter Granite Co. demo (an AERIOX add-on).
    Entry points: the ribbon along the bottom, "Buy this site with this look" at the end of the Look panel
    (src/components/Look.tsx) and "Buy this site" in the footer (src/components/Footer.tsx); every element with
-   data-buy-open opens it. One dialog: a plan, the AI Voice Agent add-on, how booking works (when an agent
-   books), what's due today, the terms box, then "Continue to secure checkout", which posts to
-   aeriox.co/api/offer/checkout and sends the buyer to Stripe. Stripe sends them back here with ?offer=thanks
+   data-buy-open opens it. One dialog: a plan, the AI Voice Agent add-on while aeriox.co offers it, how booking
+   works (when an agent books), what's due today, the terms box, then "Continue to secure checkout", which posts
+   to aeriox.co/api/offer/checkout and sends the buyer to Stripe. Stripe sends them back here with ?offer=thanks
    or ?offer=cancelled.
 
    Ported from the original Canino site (aeriox/canino-construction buy.js). The look that goes with the order
    is the Look panel's own (src/lib/look.config.ts, window.__LOOK_CONFIG__): read from the <html data-*>
    attributes the panel sets (Look.tsx applyDom), under the panel's ids. The server keeps the same ids
    (aeriox-site api/_lib/offer.ts, JUPITER_GRANITE_ORIGINAL_LOOK) and refuses any other; change them together.
+   The AI Voice Agent add-on shows only while aeriox.co offers it (aeriox-site api/_lib/offer.ts
+   VOICE_ADDON_OFFERED, the one switch): the first time the panel is built it asks GET /api/offer/checkout,
+   and the add-on's card goes in only on {voice: {offered: true, monthlyCents}} at OFFER.prices.voice, with the
+   tab's earlier tick restored. No answer, an error or another price: no add-on, and every order goes out with
+   voice: false. A 400 voice_unavailable on submit (the switch went off while this page was open) takes it off.
    OFFER is the one place this page keeps the prices and plan text; the server's copy is in the same file.
    termsVersion is aeriox-site's ORDER_TERMS_VERSION and msg.closed its CLOSED_MESSAGE, word for word. */
 (function () {
@@ -131,7 +136,8 @@
       thanksTitle: 'Thank you',
       thanks: 'Your order is in. We\u2019ll be in touch by email to set everything up with you.',
       done: 'Back to the site',
-      cancelled: 'Checkout was cancelled. Nothing was charged.'
+      cancelled: 'Checkout was cancelled. Nothing was charged.',
+      voiceOff: 'We took the AI Voice Agent off this order. Check what\u2019s due today, then continue to checkout.'
     }
   };
 
@@ -269,12 +275,64 @@
   /* ---------------- the panel ---------------- */
   var root, scrim, form, squareStep, setupEl, booksEl, voiceBox, agreeN, dueAmount, dueNotes, lookLine, goBtn, result, flash, thanksEl;
   var saved = readPicks();
-  var state = { open: false, plan: planById(saved.plan) ? saved.plan : null, voice: saved.voice === true, busy: false, opener: null };
+  var state = { open: false, plan: planById(saved.plan) ? saved.plan : null, voice: false, busy: false, opener: null };
   var inerted = [];
+
+  /* ---------------- the AI Voice Agent add-on: only while aeriox.co offers it ---------------- */
+  function addonHtml() {
+    var V = OFFER.voice;
+    return '<p class="buy-addon-h" id="buy-h-addon">' + esc(V.heading) + '</p>' +
+      '<label class="buy-card buy-addon">' +
+        '<input class="buy-input" type="checkbox" id="buy-voice" aria-describedby="buy-h-addon">' +
+        '<span class="buy-mark buy-box" aria-hidden="true"></span>' +
+        '<span class="buy-card-top"><span class="buy-card-name">' + esc(V.name) + '</span>' +
+          '<span class="buy-price">' + t(V.price) + '<small>' + esc(V.per) + '</small></span></span>' +
+        '<ul class="buy-lines">' + V.lines.map(function (l, i) { return '<li' + (i === 0 ? ' class="buy-key"' : '') + '>' + t(l) + '</li>'; }).join('') + '</ul>' +
+      '</label>';
+  }
+  /* Asked once per page: true only on {voice: {offered: true}} at OFFER.prices.voice; anything else is false. */
+  var voiceAsk = null;
+  function askVoice() {
+    if (voiceAsk) return voiceAsk;
+    voiceAsk = new Promise(function (done) {
+      if (!window.fetch) { done(false); return; }
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
+      fetch(API + '/api/offer/checkout', { method: 'GET', mode: 'cors', credentials: 'omit', cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          var v = d && d.voice;
+          return !!v && v.offered === true && v.monthlyCents === Math.round(OFFER.prices.voice * 100);
+        })
+        .catch(function () { return false; })
+        .then(function (on) { if (timer) clearTimeout(timer); done(on); });
+    });
+    return voiceAsk;
+  }
+  function showAddon() {
+    var slot = root && root.querySelector('#buy-addon-slot');
+    if (!slot || voiceBox) return;
+    slot.innerHTML = addonHtml();
+    voiceBox = slot.querySelector('#buy-voice');
+    voiceBox.addEventListener('change', function () { setVoice(voiceBox.checked); });
+    /* the tick from earlier in this tab (e.g. before a cancelled checkout), now that the add-on is here */
+    if (readPicks().voice === true) { voiceBox.checked = true; setVoice(true); }
+  }
+  /* 400 voice_unavailable: the switch went off while this page was open, so the add-on comes off the order */
+  function dropAddon() {
+    var slot = root.querySelector('#buy-addon-slot');
+    if (slot) slot.innerHTML = '';
+    voiceBox = null;
+    voiceAsk = Promise.resolve(false);
+    state.voice = false;
+    markCards();
+    update();
+    savePicks();
+  }
 
   function build() {
     if (root) return;
-    var sq = OFFER.square, ag = OFFER.agree, m = OFFER.msg, V = OFFER.voice;
+    var sq = OFFER.square, ag = OFFER.agree, m = OFFER.msg;
 
     var plans = OFFER.plans.map(function (p) {
       return '<label class="buy-card buy-plan" data-plan="' + p.id + '">' +
@@ -285,15 +343,6 @@
           '<ul class="buy-lines">' + p.lines.map(function (l) { return '<li>' + t(l) + '</li>'; }).join('') + '</ul>' +
         '</label>';
     }).join('');
-    var addon =
-      '<p class="buy-addon-h" id="buy-h-addon">' + esc(V.heading) + '</p>' +
-      '<label class="buy-card buy-addon">' +
-        '<input class="buy-input" type="checkbox" id="buy-voice" aria-describedby="buy-h-addon">' +
-        '<span class="buy-mark buy-box" aria-hidden="true"></span>' +
-        '<span class="buy-card-top"><span class="buy-card-name">' + esc(V.name) + '</span>' +
-          '<span class="buy-price">' + t(V.price) + '<small>' + esc(V.per) + '</small></span></span>' +
-        '<ul class="buy-lines">' + V.lines.map(function (l, i) { return '<li' + (i === 0 ? ' class="buy-key"' : '') + '>' + t(l) + '</li>'; }).join('') + '</ul>' +
-      '</label>';
     var ack = esc(ag.ack)
       .replace('{terms}', '<a href="' + esc(OFFER.links.terms) + '"' + NEWTAB + '>' + esc(ag.termsLabel) + SR_NEWTAB + '</a>')
       .replace('{orderTerms}', '<a href="' + esc(OFFER.links.orderTerms) + '"' + NEWTAB + '>' + esc(ag.orderTermsLabel) + SR_NEWTAB + '</a>');
@@ -326,7 +375,7 @@
             '<h3 class="buy-step-h" id="buy-h-plan"><span class="buy-n">01</span>Choose a plan</h3>' +
             '<div class="buy-cards" role="radiogroup" aria-labelledby="buy-h-plan" aria-describedby="buy-err-plan">' + plans + '</div>' +
             '<p class="buy-err" id="buy-err-plan" hidden>' + esc(m.pickPlan) + '</p>' +
-            addon +
+            '<div id="buy-addon-slot"></div>' +
           '</div>' +
           '<div class="buy-step" id="buy-step-square" hidden>' +
             '<h3 class="buy-step-h"><span class="buy-n">02</span>' + esc(sq.step) + '</h3>' +
@@ -365,7 +414,6 @@
     squareStep = root.querySelector('#buy-step-square');
     setupEl = root.querySelector('#buy-sq-setup');
     booksEl = root.querySelector('#buy-sq-books');
-    voiceBox = root.querySelector('#buy-voice');
     agreeN = root.querySelector('#buy-agree-n');
     dueAmount = root.querySelector('#buy-due-amount');
     dueNotes = root.querySelector('#buy-due-notes');
@@ -385,7 +433,6 @@
     Array.prototype.forEach.call(root.querySelectorAll('input[name="buy-plan"]'), function (r) {
       r.addEventListener('change', function () { if (r.checked) pickPlan(r.value); });
     });
-    voiceBox.addEventListener('change', function () { setVoice(voiceBox.checked); });
     Array.prototype.forEach.call(root.querySelectorAll('.buy-check input'), function (c) {
       c.addEventListener('change', function () { if (c.checked) setError(c.id.replace('buy-ack-', ''), false); });
     });
@@ -393,9 +440,9 @@
 
     /* the plan and add-on picked earlier in this tab (e.g. before a cancelled checkout) */
     if (state.plan) { root.querySelector('input[value="' + state.plan + '"]').checked = true; }
-    voiceBox.checked = state.voice;
     markCards();
     update();
+    askVoice().then(function (on) { if (on) showAddon(); });
   }
 
   /* ---------------- choices ---------------- */
@@ -405,7 +452,8 @@
   function agentBooks() { return withChat() || state.voice; }
   function markCards() {
     Array.prototype.forEach.call(root.querySelectorAll('.buy-plan'), function (el) { el.classList.toggle('is-picked', el.getAttribute('data-plan') === state.plan); });
-    root.querySelector('.buy-addon').classList.toggle('is-picked', state.voice);
+    var card = root.querySelector('.buy-addon');
+    if (card) card.classList.toggle('is-picked', state.voice);
   }
   function pickPlan(id) {
     if (!planById(id)) return;
@@ -416,7 +464,7 @@
     savePicks();
   }
   function setVoice(on) {
-    state.voice = !!on;
+    state.voice = !!on && !!voiceBox;
     markCards();
     update();
     savePicks();
@@ -517,6 +565,7 @@
         if (box) box.focus();
         return;
       }
+      if (res.status === 400 && d.error === 'voice_unavailable') { dropAddon(); return showNote(OFFER.msg.voiceOff); }
       if (res.status === 409) return showNote(OFFER.msg.termsChanged);
       if (res.status === 429) return showNote(OFFER.msg.limited);
       showNote(OFFER.msg.failed);
