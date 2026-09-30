@@ -24,6 +24,7 @@ import { site } from "@/lib/site";
 import { Footer } from "@/components/Footer";
 import { Look, LookThemeScript } from "@/components/Look";
 import { StickyMobileBar } from "@/components/StickyMobileBar";
+import { AerioxAddons } from "@/components/AerioxAddons";
 
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], display: "swap" });
 const jakarta = Plus_Jakarta_Sans({ variable: "--font-jakarta", subsets: ["latin"], display: "swap" });
@@ -115,6 +116,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Footer />
         <StickyMobileBar />
         <Look />
+        <AerioxAddons />
       </body>
     </html>
   );

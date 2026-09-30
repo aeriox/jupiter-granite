@@ -1,0 +1,843 @@
+/* ============================================================
+   AERIOX add-ons on the original Jupiter Granite Co. demo
+   ------------------------------------------------------------
+   The buy ribbon and panel (public/aeriox/buy.js), the voice demo's pill and call panel
+   (public/aeriox/voice-pill.js, voice.js) and the AI chat's launcher (#axc, src/aeriox/chatSnippet.ts).
+   Ported from the original Canino site (aeriox/canino-construction buy.css, voice.css), re-dressed in this
+   site's own parts so every Look re-themes them: the colour tokens (--color-*, globals.css), the sans UI face
+   (--font-sans), the .eyebrow label, the Look panel's double bezel (bg-surface shell, bg-bg core), the Nav's
+   dark glass pill and the CTA's round knob with its arrow.
+
+   Where everything sits (the site's breakpoints: phone under 768px, tablet and desktop from 768px):
+     phone    the sticky call bar (globals.css) at the bottom; the ribbon flush on top of it; above the
+              ribbon one row: the front-desk button (the chat's launcher, or the voice pill) on the left,
+              the Look button on the right.
+     768+     the ribbon along the bottom; above it on the right, the Look button, and the front-desk button
+              stacked over it.
+   buy.js measures the ribbon (--buy-ribbon-h) and the header's bottom edge (--buy-nav-h).
+   Layers: Nav 50, grain 60, sticky bar and ribbon 70, #vd and #axc 75, Look 80 (its panel opens over the
+   rest), buy scrim 90 and panel 91; on phones the chat's sheet takes its own modal layer.
+   The phone menu (html[data-menu-open]) hides everything here, as globals.css hides the bar and Look.
+
+   The booking panel (not built yet) mounts at #ax-booking (AerioxAddons.tsx): it takes the buy panel's layer
+   and card (a right-anchored card from 768px, a bottom sheet on phones), opens from a CTA that says what it
+   does, adds html.ax-open while open (the chat closes and tucks its launcher away) and dispatches
+   window "ax:open" with its own detail.
+   ============================================================ */
+
+:root {
+  --ax-ease: var(--ease-lux, cubic-bezier(0.32, 0.72, 0, 1));
+  --ax-gap: 0.6rem;
+  /* the phone call bar under everything (globals.css .sticky-mobile-bar); none from 768px */
+  --ax-bar: 0px;
+  /* the ribbon's height: buy.js measures it; this is the same height (its 2.75rem button, padding and top
+     hairline), so the page lays out for it from the first paint and nothing moves when the ribbon arrives */
+  --ax-rib: var(--buy-ribbon-h, calc(2.75rem + 1rem + 1px));
+  /* the Look button's bottom edge and height (Look.tsx: h-12, h-10 on phones) */
+  --ax-look-h: 3rem;
+  --ax-look-bottom: calc(var(--ax-rib) + 1.25rem);
+  /* the front-desk button (the chat's launcher or the voice pill): its bottom edge and height */
+  --ax-fd-h: 3rem;
+  --ax-fd-bottom: calc(var(--ax-look-bottom) + var(--ax-look-h) + var(--ax-gap));
+}
+@media (max-width: 767px) {
+  :root {
+    --ax-bar: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+    --ax-look-h: 2.5rem;
+    --ax-fd-h: 2.5rem;
+    --ax-rib: var(--buy-ribbon-h, calc(2.75rem + 0.8rem + 1px));
+    --ax-look-bottom: calc(var(--ax-bar) + var(--ax-rib) + 0.75rem);
+    --ax-fd-bottom: var(--ax-look-bottom);
+  }
+}
+
+/* ---------- the Look button: above the ribbon ---------- */
+html .look-picker { bottom: var(--ax-look-bottom); }
+/* its panel stops short of the header, now that the button sits higher */
+html .look-panel > .no-bar {
+  max-height: min(70vh, calc(100dvh - var(--ax-look-bottom) - var(--ax-look-h) - 0.75rem - var(--buy-nav-h, 86px) - 0.75rem));
+}
+/* taps pass through the Look container's empty box to the front-desk button beside it */
+html.has-voice .look-picker { pointer-events: none; }
+html.has-voice .look-picker > * { pointer-events: auto; }
+
+/* ---------- the Look panel's buy button (Look.tsx) and the footer link (Footer.tsx) ---------- */
+.look-buy:focus-visible,
+footer a[data-buy-open]:focus-visible { outline: 2px solid var(--color-accent2); outline-offset: 3px; }
+footer a[data-buy-open] { text-decoration: underline; text-underline-offset: 0.25em; text-decoration-thickness: 1px; }
+
+/* ---------- the ribbon: the site's dark band, with the Nav's estimate button ---------- */
+.buy-ribbon {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--color-dark);
+  color: var(--color-ondark);
+  border-top: 1px solid color-mix(in oklab, var(--color-ondark) 14%, transparent);
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.buy-ribbon p { margin: 0; min-width: 0; font-size: 0.8125rem; line-height: 1.4; }
+.buy-ribbon strong { font-weight: 600; margin-right: 0.35rem; }
+.buy-ribbon .buy-long { color: var(--color-ondarkmuted); }
+.buy-ribbon .buy-short { display: none; color: var(--color-ondarkmuted); }
+.buy-ribbon-btn {
+  appearance: none;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.375rem 0.375rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font: 500 0.875rem/1.2 var(--font-sans), system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.5s var(--ax-ease);
+}
+.buy-ribbon-btn:active { transform: scale(0.98); }
+.buy-ribbon-btn:focus-visible { outline: 2px solid var(--color-ondark); outline-offset: 3px; }
+.buy-knob {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-fg) 10%, transparent);
+  transition: transform 0.5s var(--ax-ease);
+}
+.buy-knob svg { width: 0.875rem; height: 0.875rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.buy-ribbon-btn:hover .buy-knob { transform: translate(2px, -1px); }
+@media (max-width: 767px) {
+  /* one slim row, flush on top of the call bar */
+  .buy-ribbon { bottom: var(--ax-bar); gap: 0.75rem; padding: 0.4rem 0.75rem 0.4rem 1.25rem; box-shadow: none; }
+  .buy-ribbon p { font-size: 0.75rem; }
+  .buy-ribbon strong { display: block; margin: 0; }
+  .buy-ribbon .buy-long { display: none; }
+  .buy-ribbon .buy-short { display: block; }
+  /* the call bar goes while the Look panel is open (globals.css); the ribbon goes with it */
+  html[data-picker-open="1"] .buy-ribbon { display: none; }
+}
+html[data-menu-open="1"] .buy-ribbon,
+html[data-menu-open="1"] .vd,
+html[data-menu-open="1"] #axc { display: none !important; }
+@media print { .buy-ribbon, .buy-scrim, .buy-panel { display: none !important; } }
+
+/* ---------- clearances: the page's last line and the home hero keep clear of the fixed stack ---------- */
+/* the footer's last line ends above the ribbon and the buttons stacked on it (it stays the site's dark band) */
+html body > footer { padding-bottom: calc(var(--ax-fd-bottom) + var(--ax-fd-h) + 1rem); }
+@media (max-width: 767px) {
+  /* body already pads the call bar's height (globals.css) */
+  html body > footer { padding-bottom: calc(var(--ax-rib) + 0.75rem + var(--ax-fd-h) + 1rem); }
+  /* the hero fills the screen, so its buttons sit above the call bar, the ribbon and the button row */
+  html main#top > section:first-of-type > div.relative {
+    padding-bottom: calc(var(--ax-bar) + var(--ax-rib) + 0.75rem + var(--ax-fd-h) + 1.5rem);
+  }
+}
+/* desktop: the hero's rating card rises clear of the ribbon and the stacked buttons in its corner */
+@media (min-width: 1024px) {
+  html main#top > section:first-of-type > div.absolute.bottom-8 {
+    bottom: calc(var(--ax-fd-bottom) + var(--ax-fd-h) + 1rem);
+  }
+}
+
+/* ---------- the buy panel: the Look panel's double bezel ---------- */
+html.buy-is-open { overflow: hidden; }
+html.buy-is-open .vd,
+html.buy-is-open #axc { visibility: hidden; }
+.buy-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: color-mix(in srgb, var(--color-dark) 45%, transparent);
+  animation: buy-fade 0.3s var(--ax-ease);
+}
+.buy-scrim[hidden], .buy-panel[hidden] { display: none; }
+.buy-panel {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 91;
+  display: flex;
+  flex-direction: column;
+  width: min(27rem, calc(100vw - 2.5rem));
+  max-height: calc(100dvh - 2.5rem);
+  padding: 0.375rem;
+  background: var(--color-surface);
+  color: var(--color-fg);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.buy-core {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: calc(1rem - 0.375rem);
+  background: var(--color-bg);
+}
+.buy-panel.is-in { animation: buy-in 0.5s var(--ax-ease); }
+@keyframes buy-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes buy-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .buy-panel.is-in, .buy-scrim { animation: none; }
+}
+
+.buy-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1rem 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.buy-title {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: var(--display-weight, 300);
+  letter-spacing: var(--display-tracking, -0.02em);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+.buy-title:focus { outline: none; }
+.buy-sub { margin: 0.3rem 0 0; font-size: 0.75rem; color: var(--color-muted); }
+.buy-x {
+  appearance: none;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -0.4rem -0.4rem 0 0;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+.buy-x:hover { color: var(--color-fg); background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+.buy-x svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.buy-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1rem 1.1rem 1.1rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-fg) 22%, transparent) transparent;
+}
+.buy-form[hidden], .buy-thanks[hidden], .buy-step[hidden], .buy-err[hidden], .buy-flash[hidden] { display: none; }
+.buy-lede { margin: 0 0 1.1rem; font-size: 0.875rem; color: var(--color-muted); }
+.buy-p { margin: 0 0 0.6rem; font-size: 0.84rem; }
+.buy-h4 { margin: 0 0 0.45rem; font-size: 0.875rem; font-weight: 600; }
+.buy-flash {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--color-accent2) 12%, var(--color-bg));
+  font-size: 0.8125rem;
+}
+
+.buy-step { margin-bottom: 1.4rem; }
+/* the site's .eyebrow, in the muted ink (4.5:1 on every scheme's bg) */
+.buy-step-h,
+.buy-addon-h,
+.buy-due-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0 0 0.65rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.buy-addon-h { margin-top: 1.1rem; }
+.buy-n { font-variant-numeric: tabular-nums; color: var(--color-fg); }
+
+/* a plan or the add-on: a card, like the Look panel's preset tiles */
+.buy-cards { display: grid; gap: 0.55rem; }
+.buy-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15rem 1fr;
+  column-gap: 0.7rem;
+  padding: 0.85rem 0.9rem 0.8rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: border-color 0.3s var(--ax-ease), background-color 0.3s var(--ax-ease);
+}
+.buy-card:hover { border-color: color-mix(in srgb, var(--color-fg) 22%, transparent); }
+.buy-card.is-picked {
+  border-color: var(--color-fg);
+  box-shadow: 0 0 0 1px var(--color-fg);
+  background: color-mix(in srgb, var(--color-fg) 4%, var(--color-bg));
+}
+.buy-card:has(.buy-input:focus-visible),
+.buy-check:has(.buy-input:focus-visible) { outline: 2px solid var(--color-accent2); outline-offset: 2px; }
+.buy-input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+.buy-mark {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  margin-top: 0.1rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1.5px solid color-mix(in srgb, var(--color-fg) 45%, transparent);
+  display: grid;
+  place-items: center;
+}
+.buy-dot { border-radius: 50%; }
+.buy-box { border-radius: 0.3rem; }
+.buy-input:checked + .buy-dot { border-color: var(--color-fg); }
+.buy-input:checked + .buy-dot::after { content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--color-fg); }
+.buy-input:checked + .buy-box { background: var(--color-fg); border-color: var(--color-fg); }
+.buy-input:checked + .buy-box::after {
+  content: "";
+  width: 0.32rem;
+  height: 0.6rem;
+  margin-top: -0.12rem;
+  border: solid var(--color-bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.buy-card-top { grid-column: 2; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.buy-card-name { font-size: 0.9375rem; font-weight: 600; line-height: 1.3; }
+.buy-price { flex: none; font-size: 0.9375rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; line-height: 1.3; }
+.buy-price small { display: block; font-size: 0.6875rem; font-weight: 500; color: var(--color-muted); }
+.buy-lines { grid-column: 2; margin: 0.4rem 0 0; padding: 0; list-style: none; font-size: 0.8125rem; line-height: 1.45; color: var(--color-muted); }
+.buy-lines li { position: relative; padding-left: 0.85rem; margin-top: 0.25rem; }
+.buy-lines li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 0.3rem; height: 0.3rem; border-radius: 50%; background: var(--color-accent); }
+.buy-lines .buy-key { font-weight: 600; color: var(--color-fg); }
+
+/* a box to tick */
+.buy-check {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15rem 1fr;
+  column-gap: 0.7rem;
+  align-items: start;
+  margin: 0.8rem 0 0;
+  padding: 0.3rem 0.1rem;
+  border-radius: 0.5rem;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+.buy-check .buy-mark { margin-top: 0.12rem; }
+.buy-check a { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.buy-check.is-invalid .buy-mark { border-color: #b3261e; }
+.buy-err { margin: 0.35rem 0 0; font-size: 0.78rem; font-weight: 600; color: #b3261e; }
+html[data-mode="dark"] .buy-check.is-invalid .buy-mark,
+html[data-theme="monolith"]:not([data-mode="light"]) .buy-check.is-invalid .buy-mark { border-color: #ffb4ab; }
+html[data-mode="dark"] .buy-err,
+html[data-theme="monolith"]:not([data-mode="light"]) .buy-err { color: #ffb4ab; }
+
+/* what's due today: the Look panel's shell tone */
+.buy-due { padding: 0.9rem 0.95rem; border-radius: 0.75rem; background: var(--color-surface); border: 1px solid var(--color-line); }
+.buy-due-top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.buy-due-label { margin: 0; }
+.buy-due-amount { font-family: var(--font-display), Georgia, serif; font-size: 1.75rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.buy-due-notes { margin: 0.5rem 0 0; padding: 0; list-style: none; font-size: 0.8125rem; line-height: 1.45; color: var(--color-muted); }
+.buy-due-notes li { margin-top: 0.2rem; }
+.buy-due-notes li:first-child { font-weight: 600; color: var(--color-fg); }
+.buy-look-line { margin: 0.7rem 0 0; padding-top: 0.65rem; border-top: 1px solid var(--color-line); font-size: 0.78rem; color: var(--color-muted); }
+.buy-look-line strong { color: var(--color-fg); font-weight: 600; }
+.buy-link {
+  appearance: none;
+  border: 0;
+  padding: 0.5rem 0.1rem;
+  margin: -0.5rem 0;
+  background: none;
+  color: var(--color-fg);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+/* checkout: the site's solid CTA (bg-fg text-bg, rounded-full, the round knob with the arrow) */
+.buy-go {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3rem;
+  margin-top: 1rem;
+  padding: 0.375rem 0.375rem 0.375rem 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  font: 500 0.875rem/1.2 var(--font-sans), system-ui, sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.5s var(--ax-ease);
+}
+.buy-go:active { transform: scale(0.98); }
+.buy-go[disabled] { cursor: progress; opacity: 0.82; }
+.buy-go .buy-knob { width: 2rem; height: 2rem; background: color-mix(in srgb, var(--color-bg) 15%, transparent); }
+.buy-go .buy-knob svg { width: 1rem; height: 1rem; }
+.buy-go:hover .buy-knob { transform: translate(2px, -1px); }
+.buy-secure { display: flex; align-items: center; gap: 0.45rem; margin: 0.65rem 0 0; font-size: 0.75rem; color: var(--color-muted); }
+.buy-secure svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+.buy-note { margin-top: 1rem; padding: 0.9rem 0.95rem; border-radius: 0.75rem; border: 1px solid var(--color-line); background: var(--color-surface); text-align: left; }
+.buy-note:focus { outline: none; }
+/* the site's outline CTA */
+.buy-ghost {
+  appearance: none;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  margin: 0.4rem 0 0;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-fg) 30%, transparent);
+  background: transparent;
+  color: var(--color-fg);
+  font: 500 0.875rem/1.2 var(--font-sans), system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.buy-ghost:hover { background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+.buy-thanks { padding: 0.4rem 0 0.6rem; }
+.buy-thanks-h { margin: 0 0 0.4rem; font-family: var(--font-display), Georgia, serif; font-weight: var(--display-weight, 300); font-size: 1.5rem; }
+.buy-thanks .buy-ghost { margin-top: 1rem; }
+
+.buy-foot {
+  margin: 0;
+  padding: 0.8rem 1.1rem calc(0.85rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--color-line);
+  font-size: 0.78rem;
+  color: var(--color-muted);
+}
+.buy-foot a { color: var(--color-fg); font-weight: 600; text-underline-offset: 0.2em; }
+.buy-x:focus-visible, .buy-go:focus-visible, .buy-ghost:focus-visible, .buy-link:focus-visible, .buy-foot a:focus-visible, .buy-check a:focus-visible {
+  outline: 2px solid var(--color-accent2);
+  outline-offset: 3px;
+}
+.buy-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* phones: a sheet from the bottom edge */
+@media (max-width: 767px) {
+  .buy-panel {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: calc(100dvh - 2.2rem);
+    border-radius: 1rem 1rem 0 0;
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .buy-core { border-radius: calc(1rem - 0.375rem) calc(1rem - 0.375rem) 0 0; }
+  .buy-head { padding: 0.9rem 1rem 0.8rem; }
+  .buy-body { padding: 0.9rem 1rem 1rem; }
+  .buy-foot { padding-inline: 1rem; }
+}
+
+/* ============================================================
+   The voice demo: "Talk to our front desk" (#vd; voice-pill.js, voice.js)
+   ============================================================ */
+.vd { display: none; }
+html.has-voice .vd {
+  --vd-pill-h: var(--ax-fd-h);
+  --vd-gap: var(--ax-gap);
+  --vd-bottom: var(--ax-fd-bottom);
+  position: fixed;
+  right: 1.25rem;
+  bottom: var(--vd-bottom);
+  z-index: 75;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  pointer-events: none;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: var(--color-fg);
+}
+html.has-voice .vd > * { pointer-events: auto; }
+@media print { html.has-voice .vd { display: none; } }
+
+/* ---------- the pill: the Nav's dark glass pill, with a round chip ---------- */
+.vd-pill,
+#axc .axc-l {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: var(--ax-fd-h);
+  max-width: 100%;
+  margin: 0;
+  padding: 0.3rem 1.1rem 0.3rem 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-dark) 80%, transparent);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.35);
+  color: var(--color-ondark);
+  font: 500 0.875rem/1.2 var(--font-sans), system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.5s var(--ax-ease), opacity 0.3s var(--ax-ease), visibility 0s;
+}
+.vd-pill:active, #axc .axc-l:active { transform: scale(0.98); }
+.vd-pill:focus-visible, #axc .axc-l:focus-visible { outline: 2px solid var(--color-accent2); outline-offset: 3px; }
+.vd-pill[aria-busy="true"] { cursor: progress; }
+.vd-pill-txt { overflow: hidden; text-overflow: ellipsis; }
+.vd-pill-short { display: none; }
+.vd-badge {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: calc(var(--ax-fd-h) - 0.6rem - 2px);
+  height: calc(var(--ax-fd-h) - 0.6rem - 2px);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-ondark);
+}
+.vd-i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* on a call: a slow ring around the chip */
+.vd.is-live .vd-pill .vd-badge::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  animation: vd-ring 2.2s var(--ax-ease) infinite;
+}
+@keyframes vd-ring { 50% { opacity: 0.25; transform: scale(1.08); } }
+.vd.is-open .vd-pill { background: var(--color-dark); }
+/* out of the way while the Look panel is open: it opens over this corner. voice.js closes an open panel
+   when Look opens; a panel with a call on stays, hidden under Look, and comes back when Look closes. */
+html[data-picker-open] .vd .vd-pill,
+html[data-picker-open] .vd .vd-panel,
+html[data-picker-open] #axc .axc-l,
+html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: opacity 0.2s var(--ax-ease), visibility 0s linear 0.2s; }
+/* steps aside while it would sit on the hero's buttons (voice-pill.js), unless it's in use or focused */
+.vd.is-aside:not(.is-open):not(.is-live):not(:focus-within) .vd-pill,
+#axc.is-aside:not([data-open]):not(:focus-within) .axc-l { opacity: 0; pointer-events: none; }
+
+/* ---------- the call panel: the Look panel's double bezel ---------- */
+.vd-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--vd-gap));
+  width: min(24rem, calc(100vw - 2.5rem));
+  max-height: calc(100vh - var(--vd-bottom) - var(--vd-pill-h) - var(--vd-gap) - var(--buy-nav-h, 86px) - 0.75rem);
+  max-height: calc(100dvh - var(--vd-bottom) - var(--vd-pill-h) - var(--vd-gap) - var(--buy-nav-h, 86px) - 0.75rem);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-fg) 22%, transparent) transparent;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  border: 0.375rem solid var(--color-surface);
+  outline: 1px solid var(--color-line);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: left;
+  transform-origin: 100% 100%;
+}
+.vd-panel[hidden] { display: none; }
+.vd-panel::-webkit-scrollbar, .vd-log::-webkit-scrollbar { width: 6px; }
+.vd-panel::-webkit-scrollbar-track, .vd-log::-webkit-scrollbar-track { background: transparent; }
+.vd-panel::-webkit-scrollbar-thumb, .vd-log::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--color-fg) 22%, transparent); border-radius: 3px; }
+@media (prefers-reduced-motion: no-preference) {
+  .vd-panel { opacity: 0; transform: translateY(12px); transition: opacity 0.26s var(--ax-ease), transform 0.26s var(--ax-ease); }
+  .vd-panel.is-in { opacity: 1; transform: none; }
+}
+.vd .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.vd-head {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 0.8rem 0.8rem 1rem;
+  border-bottom: 1px solid var(--color-line);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-bg);
+}
+.vd-head .vd-badge { width: 2.25rem; height: 2.25rem; background: var(--color-fg); color: var(--color-bg); }
+.vd-titles { min-width: 0; }
+.vd-eyebrow,
+.vd-status,
+.vd-legend,
+.vd-who,
+.vd-card-eyebrow,
+.vd-by {
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.vd .vd-title {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: var(--display-weight, 300);
+  letter-spacing: var(--display-tracking, -0.02em);
+  font-size: 1.25rem;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vd-status { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
+.vd-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--color-fg) 35%, transparent); }
+.vd-panel[data-state="connecting"] .vd-dot { background: var(--color-accent); }
+.vd-panel[data-state="live"] .vd-dot { background: var(--color-accent); animation: vd-pulse 2.2s var(--ax-ease) infinite; }
+@keyframes vd-pulse { 50% { opacity: 0.35; } }
+.vd-timer { margin-left: auto; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+.vd-x {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+.vd-x .vd-i { width: 16px; height: 16px; stroke-width: 1.6; }
+.vd-x:hover { color: var(--color-fg); background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+
+/* transcript */
+.vd-log {
+  flex: 1 1 auto;
+  min-height: 7.5rem;
+  max-height: 42vh;
+  max-height: 42dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-fg) 22%, transparent) transparent;
+  background: var(--color-surface);
+}
+.vd-b { max-width: 88%; padding: 0.6rem 0.8rem; border-radius: 0.75rem; font-size: 0.875rem; line-height: 1.45; overflow-wrap: anywhere; }
+.vd-who { display: block; margin-bottom: 0.15rem; }
+/* a conversation reads by side: the caller's lines sit right, the front desk's left */
+.vd-b.ai { align-self: flex-start; background: var(--color-bg); border: 1px solid var(--color-line); border-bottom-left-radius: 0.25rem; }
+.vd-b.you { align-self: flex-end; background: color-mix(in srgb, var(--color-accent2) 12%, var(--color-bg)); border-bottom-right-radius: 0.25rem; }
+.vd-note { margin: 0; font-size: 0.8125rem; line-height: 1.45; color: var(--color-muted); }
+.vd-typing { align-self: flex-end; display: flex; gap: 4px; padding: 0.75rem 0.9rem; border-radius: 0.75rem; background: color-mix(in srgb, var(--color-accent2) 12%, var(--color-bg)); }
+.vd-typing i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.3; animation: vd-dots 1.2s ease-in-out infinite; }
+.vd-typing i:nth-child(2) { animation-delay: 0.15s; }
+.vd-typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes vd-dots { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+
+/* a demo booking: a card, like the buy panel's plan cards */
+.vd-card { align-self: stretch; padding: 0.8rem 0.9rem; border-radius: 0.75rem; border: 1px solid var(--color-fg); background: var(--color-bg); }
+.vd-card p { margin: 0; }
+.vd-card .vd-card-what { margin-top: 0.35rem; font-size: 0.9375rem; font-weight: 600; line-height: 1.3; }
+.vd-card .vd-card-when { margin-top: 0.15rem; font-size: 0.875rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.vd-card .vd-card-who, .vd-card .vd-card-contact { margin-top: 0.1rem; font-size: 0.8125rem; color: var(--color-muted); overflow-wrap: anywhere; }
+.vd-card-contact { font-variant-numeric: tabular-nums; }
+
+/* voice, talk, fine print */
+.vd-foot { display: grid; gap: 0.75rem; padding: 0.9rem 1rem 1rem; border-top: 1px solid var(--color-line); }
+.vd-voices { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; min-width: 0; margin: 0; padding: 0; border: 0; }
+.vd-legend { float: left; margin-right: 0.35rem; padding: 0; }
+.vd-chip { position: relative; }
+.vd-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+/* the Look panel's option rows (bg-fg text-bg when picked), at a finger's size */
+.vd-chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.vd-chip input:checked + span { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.vd-chip input:focus-visible + span { outline: 2px solid var(--color-accent2); outline-offset: 2px; }
+.vd-chip input:disabled { cursor: not-allowed; }
+.vd-chip input:disabled + span { opacity: 0.55; }
+.vd-hint { flex-basis: 100%; font-size: 0.75rem; line-height: 1.35; color: var(--color-muted); }
+.vd-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; }
+/* Talk: the site's solid CTA with its round knob */
+.vd-talk {
+  appearance: none;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.375rem 0.375rem 0.375rem 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  font: 500 0.875rem/1.2 var(--font-sans), system-ui, sans-serif;
+  cursor: pointer;
+  transition: transform 0.5s var(--ax-ease);
+}
+.vd-talk:active { transform: scale(0.98); }
+.vd-talk:focus-visible, .vd-link:focus-visible, .vd-x:focus-visible, .vd-log:focus-visible, .vd-fine a:focus-visible, .vd-by a:focus-visible { outline: 2px solid var(--color-accent2); outline-offset: 3px; }
+.vd-talk-ico { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: color-mix(in srgb, var(--color-bg) 15%, transparent); }
+/* on a call the button hangs up: an outline, so it reads as the other action */
+.vd-panel[data-state="live"] .vd-talk { background: transparent; color: var(--color-fg); box-shadow: inset 0 0 0 1.5px currentColor; }
+.vd-panel[data-state="live"] .vd-talk-ico { background: color-mix(in srgb, var(--color-fg) 8%, transparent); }
+.vd-link {
+  appearance: none;
+  min-height: 2.75rem;
+  padding: 0 0.4rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: 600 0.8125rem/1.2 var(--font-sans), system-ui, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.vd-link[hidden] { display: none; }
+.vd-link[aria-pressed="true"] { text-decoration-thickness: 2px; }
+.vd-fine { margin: 0; font-size: 0.75rem; line-height: 1.45; color: var(--color-muted); }
+.vd-fine a, .vd-by a { color: var(--color-fg); font-weight: 600; text-underline-offset: 0.2em; }
+.vd-by a { display: inline-block; padding-block: 0.6rem; margin-block: -0.6rem; }
+
+/* phones: left in the Look button's row, above the ribbon */
+@media (max-width: 767px) {
+  html.has-voice .vd { left: 1.25rem; right: auto; justify-content: flex-start; }
+  /* room for the Look button (about 3.7rem wide, 1.25rem in from the edge) and a gap */
+  .vd-pill, #axc .axc-l { max-width: calc(100vw - 7.5rem); padding-right: 1rem; gap: 0.5rem; }
+  /* opens from the pill's corner; full width under 600px */
+  .vd-panel { left: 0; right: auto; width: min(24rem, calc(100vw - 2.5rem)); transform-origin: 0 100%; }
+  .vd-log { max-height: 34vh; max-height: 34dvh; min-height: 6rem; }
+}
+@media (max-width: 599px) {
+  .vd-panel { width: calc(100vw - 2.5rem); }
+}
+@media (max-width: 344px) {
+  .vd-pill-long { display: none; }
+  .vd-pill-short { display: inline; }
+}
+/* very short desktop windows: the panel opens beside the stacked buttons instead of above them */
+@media (min-width: 768px) and (max-height: 560px) {
+  .vd-panel {
+    right: calc(100% + var(--vd-gap));
+    bottom: calc(var(--ax-rib) + var(--vd-gap) - var(--vd-bottom));
+    max-height: calc(100vh - var(--buy-nav-h, 86px) - 0.75rem - var(--ax-rib) - var(--vd-gap));
+    max-height: calc(100dvh - var(--buy-nav-h, 86px) - 0.75rem - var(--ax-rib) - var(--vd-gap));
+  }
+}
+/* short screens: the transcript gives up room first and the hint and credit line go, so the title, Talk
+   and the fine print fit without scrolling */
+@media (max-height: 760px) {
+  .vd-head { padding-top: 0.6rem; padding-bottom: 0.55rem; }
+  html.has-voice .vd .vd-log { min-height: 3.25rem; }
+  .vd-foot { gap: 0.6rem; padding-top: 0.75rem; padding-bottom: 0.85rem; }
+  .vd-hint, .vd-by { display: none; }
+}
+@media (max-height: 600px) {
+  .vd-eyebrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vd-pill, .vd-talk, #axc .axc-l { transition: none; }
+  .vd-pill:active, .vd-talk:active, #axc .axc-l:active { transform: none; }
+  .vd.is-live .vd-pill .vd-badge::after, .vd-dot, .vd-typing i { animation: none !important; }
+}
+
+/* ============================================================
+   The AI chat: "Ask our front desk" (#axc, the snippet in chatSnippet.ts)
+   ------------------------------------------------------------
+   One front-desk button: while the chat's launcher is on the page it takes the pill's place and the pill
+   steps aside (the snippet's own rule); Talk in the chat's Type | Talk switch presses the pill, so the call
+   panel opens as before. If the chat turns out to be off, the launcher goes and the pill comes back. The
+   chat draws its panel from the aliases below, so it follows the picked palette and mode, and it stops short
+   of the header (--axc-top). Its visitor bubbles sit right: a conversation reads by side, the one exception
+   to the left-aligned phone text (the widget's CSS carries the same note).
+   ============================================================ */
+#axc {
+  --axc-bg: var(--color-bg);
+  --axc-surface: color-mix(in srgb, var(--color-fg) 6%, var(--color-bg));
+  --axc-text: var(--color-fg);
+  --axc-muted: var(--color-muted);   /* 4.5:1 or more on --color-bg in every palette and mode */
+  --axc-accent: var(--color-fg);
+  --axc-on-accent: var(--color-bg);
+  --axc-line: var(--color-line);
+  --axc-focus: var(--color-accent2);
+  --axc-radius: var(--radius-sm, 1rem);
+  --axc-font: var(--font-sans), system-ui, sans-serif;
+  --axc-right: 1.25rem;
+  --axc-bottom: var(--ax-fd-bottom);
+  --axc-top: calc(var(--buy-nav-h, 86px) + 0.75rem);
+  --axc-z: 75;
+  display: flex;
+  align-items: flex-end;
+  color: var(--color-fg);
+}
+@media (scripting: none) { #axc { display: none; } }
+/* The snippet hides the pill (display: none) while the launcher is on the page. Here the pill keeps its box
+   instead, invisible and out of the tab order, so the call panel still opens above it exactly as before; and
+   while the call panel is open (the launcher is gone then) the pill shows again, pressed in, as its anchor. */
+html body:has(#axc:not([hidden])) #vd .vd-pill { display: inline-flex !important; }
+body:has(#axc:not([hidden])) #vd:not(.is-open) .vd-pill { visibility: hidden; }
+/* the pill's dress (above); the chat mark sits in the same round chip */
+#axc .axc-l svg {
+  flex: none;
+  box-sizing: border-box;
+  width: calc(var(--ax-fd-h) - 0.6rem - 2px);
+  height: calc(var(--ax-fd-h) - 0.6rem - 2px);
+  padding: calc((var(--ax-fd-h) - 0.6rem - 2px - 18px) / 2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-ondark);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+#axc .axc-l > span { overflow: hidden; text-overflow: ellipsis; }
+/* phones: the pill's place, left in the Look button's row, above the ribbon */
+@media (max-width: 767px) {
+  #axc { --axc-right: auto; left: 1.25rem; }
+}
+/* 600-767px: the chat opens as a card (phones under 600px get its bottom sheet). The card is right-aligned
+   in #axc, so #axc spans the card's width from the launcher's left edge; taps pass through its empty part. */
+@media (min-width: 600px) and (max-width: 767px) {
+  #axc { width: min(380px, calc(100vw - 2.5rem)); pointer-events: none; }
+  #axc > * { pointer-events: auto; }
+}
