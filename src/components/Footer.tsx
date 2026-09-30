@@ -43,7 +43,11 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-ondarkmuted sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Jupiter Granite Co. All rights reserved. · Palm Beach County Contractor License # {site.license}</p>
-          <p>Jupiter - Palm Beach - South Florida</p>
+          <p>
+            Jupiter - Palm Beach - South Florida
+            <span aria-hidden="true"> · </span>
+            <a href="#buy-panel" data-buy-open aria-haspopup="dialog" aria-controls="buy-panel" className="inline-block hover:text-ondark max-md:py-2">Buy this site</a>
+          </p>
         </div>
       </Shell>
     </footer>
