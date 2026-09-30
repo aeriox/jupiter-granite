@@ -40,7 +40,7 @@ export default function GalleryPage() {
         <Shell>
           <Reveal>
             <p className="mb-10 max-w-xl text-sm leading-relaxed text-faint">
-              Captions are the stone names from our own albums.
+              Captions use the stone names from our own albums.
             </p>
           </Reveal>
         </Shell>

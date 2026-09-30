@@ -20,7 +20,7 @@ const stories = [
     title: "The Lazzara “Maggie”",
     body: "On the Lazzara vessel “Maggie” we replaced the wood flooring with HanStone quartz slabs which we milled to 8mm to match the previous floor’s thickness.",
     img: "/img/story-lazzara-maggie.jpg",
-    alt: "The Lazzara vessel “Maggie” at the dock",
+    alt: "Aboard the Lazzara vessel “Maggie”",
   },
   {
     tag: "Sinks & Faucets",

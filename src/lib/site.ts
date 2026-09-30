@@ -134,7 +134,7 @@ export const services = [
     slug: "fireplaces-columns",
     name: "Fireplaces & Columns",
     blurb:
-      "Fireplaces carved from solid marble and installed by Jupiter Granite Co., and solid marble columns.",
+      "One fireplace we installed was carved from solid marble. We also set solid marble columns.",
     img: "/img/fireplace-travertine-marble.jpg",
     alt: "Travertine Marble Fireplace",
   },
@@ -160,7 +160,7 @@ export const services = [
     blurb:
       "A huge variety of standard and designer sinks and faucets, from under mount to vessel: stainless, cast iron, hammered copper, stone composite, porcelain, glass and a giant clam shell.",
     img: "/img/sink-hammered-vessel.jpg",
-    alt: "Hammered metal vessel sink in a granite top",
+    alt: "A textured under-mount sink in a granite top",
   },
   {
     slug: "3d-renderings",
@@ -191,7 +191,7 @@ export const shopTech = [
     name: "World's 1st 5 axis saw-water jet",
     body: "Jupiter Granite purchases world's 1st 5 axis saw-water jet! Laser templating, water-jet and CNC fabrication means we get it perfect every time.",
     img: "/img/shop-shaped-top-saw.jpg",
-    alt: "A shaped marble top on the saw bed in our shop",
+    alt: "A shaped cut in a stone slab on the saw bed in our shop",
   },
   {
     name: "Material handling & seam setting",
@@ -205,7 +205,7 @@ export const shopTech = [
 
 export const estimateSteps = [
   "A simple sketch with shapes and dimensions along the walls — note raised bars, overhangs, arches and backsplashes.",
-  "Your material selection (or bring photos / inspiration and we'll guide you).",
+  "Your material selection.",
   "Whether we need to remove any existing surfaces.",
   "Your contact information and the project location.",
 ] as const;
