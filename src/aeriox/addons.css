@@ -801,7 +801,7 @@ html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: 
   font: 500 0.8125rem/1.2 var(--font-sans), system-ui, sans-serif;
   cursor: pointer;
 }
-.vd-more:hover:not(:disabled) { background: color-mix(in srgb, currentColor 6%, transparent); }
+@media (hover: hover) and (pointer: fine) { .vd-more:hover:not(:disabled) { background: color-mix(in srgb, currentColor 6%, transparent); } }
 .vd-more:focus-visible { outline: 2px solid var(--color-accent2); outline-offset: 2px; }
 .vd-more:disabled { opacity: 0.55; cursor: not-allowed; }
 /* when the chips and More would wrap (a 360 phone), voice.js sets is-tight: the "Voice" legend leaves the row
@@ -866,7 +866,7 @@ html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: 
   border-radius: 0.8rem;
   border: 1px solid transparent;
 }
-.vd-vrow:hover { background: color-mix(in srgb, currentColor 4%, transparent); }
+@media (hover: hover) and (pointer: fine) { .vd-vrow:hover { background: color-mix(in srgb, currentColor 4%, transparent); } }
 .vd-vrow:has(input:checked) { background: var(--color-bg); border-color: currentColor; }
 .vd-vrow:has(.vd-vpick input:focus-visible) { outline: 2px solid var(--color-accent2); outline-offset: 1px; }
 .vd-vpick { position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr); column-gap: 0.75rem; align-items: center; min-height: 2.75rem; padding: 0.1rem 0.25rem 0.1rem 0.6rem; cursor: pointer; text-align: left; }
@@ -892,7 +892,7 @@ html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: 
   cursor: pointer;
 }
 .vd-play .vd-pi { width: 13px; height: 13px; fill: currentColor; stroke: none; }
-.vd-play:hover { background: color-mix(in srgb, currentColor 9%, transparent); }
+@media (hover: hover) and (pointer: fine) { .vd-play:hover { background: color-mix(in srgb, currentColor 9%, transparent); } }
 .vd-play:focus-visible { outline: 2px solid var(--color-accent2); outline-offset: 2px; }
 .vd-play[data-state="playing"], .vd-play[data-state="loading"] { background: var(--color-fg); border-color: var(--color-fg); color: var(--color-bg); }
 .vd-play[data-state="loading"]::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--color-bg); animation: vd-spin 0.8s linear infinite; }
@@ -918,6 +918,19 @@ html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: 
 .vd-seg span { display: inline-flex; align-items: center; min-height: 2.35rem; padding: 0 0.85rem; border-radius: 999px; font-size: 0.8125rem; font-weight: 500; }
 .vd-seg input:checked + span { background: var(--color-fg); color: var(--color-bg); }
 .vd-seg input:focus-visible + span { outline: 2px solid var(--color-accent2); outline-offset: 2px; }
+/* a phone on its side (767 wide or less, 500 tall or less): under the header the panel has room for the
+   list's header and no rows, so while the list is open it runs from under the header to the foot of the
+   screen, over the pill row, the ribbon and the call bar (all on lower layers), and the list shows about
+   three rows. Done or Escape puts the panel back where it was. Portrait and desktop are unchanged. */
+@media (max-width: 767px) and (max-height: 500px) {
+  .vd-panel:has(.vd-vview:not([hidden])) {
+    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px) - var(--vd-bottom));
+    min-height: calc(100vh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100dvh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
+    max-height: calc(100vh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
+    max-height: calc(100dvh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
+  }
+}
 /* under reduced motion the loading ring stands still, as a half ring */
 @media (prefers-reduced-motion: reduce) {
   .vd-play[data-state="loading"]::after { animation: none; border-color: var(--color-bg) transparent; }
