@@ -68,7 +68,7 @@
       lines: [
         '30 days free, starting the day your agent goes live.',
         'Cancel it within those 30 days and you never pay its monthly fee, and you keep your website.',
-        'It answers Jupiter Granite Co.\u2019s calls 24/7, takes messages, books appointments straight into your Google Calendar, puts urgent calls through to your cell and screens out spam.',
+        'It answers Jupiter Granite Co.\u2019s calls 24/7, takes messages and books appointments straight into your Google Calendar.',
         'Fair use applies.'
       ]
     },
