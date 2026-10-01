@@ -918,17 +918,20 @@ html[data-picker-open] #axc-panel { opacity: 0; visibility: hidden; transition: 
 .vd-seg span { display: inline-flex; align-items: center; min-height: 2.35rem; padding: 0 0.85rem; border-radius: 999px; font-size: 0.8125rem; font-weight: 500; }
 .vd-seg input:checked + span { background: var(--color-fg); color: var(--color-bg); }
 .vd-seg input:focus-visible + span { outline: 2px solid var(--color-accent2); outline-offset: 2px; }
-/* a phone on its side (767 wide or less, 500 tall or less): under the header the panel has room for the
-   list's header and no rows, so while the list is open it runs from under the header to the foot of the
-   screen, over the pill row, the ribbon and the call bar (all on lower layers), and the list shows about
-   three rows. Done or Escape puts the panel back where it was. Portrait and desktop are unchanged. */
+/* a phone on its side (767 wide or less, 500 tall or less): between the header and the pill the panel would be
+   shorter than its own header, so the voices, More and Talk would sit under it. Here the open panel is a sheet
+   from the top of the screen to the foot, over the header, the pill row, the ribbon and the call bar (all on
+   lower layers), so the voices, More, Talk and the fine print all show, and the voice list shows two to three
+   rows. It keeps the phone width, clear of the Look button (a layer up). Its close button puts it away.
+   Portrait and desktop are unchanged. */
 @media (max-width: 767px) and (max-height: 500px) {
-  .vd-panel:has(.vd-vview:not([hidden])) {
+  .vd-panel {
+    right: auto;
+    width: min(24rem, calc(100vw - 2.5rem));
     bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px) - var(--vd-bottom));
-    min-height: calc(100vh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
-    min-height: calc(100dvh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
-    max-height: calc(100vh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
-    max-height: calc(100dvh - var(--buy-nav-h, 86px) - 1.5rem - env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - 1.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 1.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    max-height: none;
   }
 }
 /* under reduced motion the loading ring stands still, as a half ring */
