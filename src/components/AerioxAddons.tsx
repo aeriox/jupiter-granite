@@ -59,7 +59,7 @@ export function AerioxAddons() {
       <div id="ax-booking" hidden />
 
       <AerioxRoute />
-      <Script src="/aeriox/voice-pill.js?v=voice-1" strategy="afterInteractive" />
+      <Script src="/aeriox/voice-pill.js?v=voice-2" strategy="afterInteractive" />
       <Script src="/aeriox/buy.js?v=buy-3" strategy="afterInteractive" />
     </>
   );

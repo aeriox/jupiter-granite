@@ -24,11 +24,13 @@
     } catch (e) { /* keep the default */ }
   }
   var TENANT = 'jupiter-granite';
+  /* the two voices the panel offers before the tenant's voice list loads (voicePicker below) */
   var VOICES = [
-    { id: 'ara', name: 'Ara', hint: 'Female voice · warm, friendly' },
-    { id: 'castor', name: 'Castor', hint: 'Male voice · charismatic, down-to-earth' }
+    { id: 'ara', name: 'Ara', gender: 'female', tone: 'Warm, friendly' },
+    { id: 'castor', name: 'Castor', gender: 'male', tone: 'Charismatic, down-to-earth' }
   ];
   var VOICE_KEY = 'jupiter-granite-voice-demo';
+  var VOICE_MANIFEST = loadVoiceManifest(API, TENANT); /* the tenant's full voice list (voicePicker) */
   /* Owner pass: opening the site with #owner=<pass> keeps the pass in this browser and takes it out
      of the address bar; #owner=off forgets it (the pill's loader loads this file right away for either).
      Each call sends it: a valid one skips the per-visitor limits (never the shared ones), and the
@@ -66,8 +68,306 @@
   var MIC = '<svg class="vd-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11.5" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>';
   function svg() { return MIC; }
 
+  /* aeriox:voice-picker v1 */
+  /* The voice chooser in the front desk panel. One block, the same in every voice.js: aeriox-app's voice
+     template (scripts/site-builder/templates/addons/voice/voice.js) is its source, and the hand-built sites
+     carry a copy of it between these two markers.
+     The default view keeps two voice chips, the tenant's default and a second one (the visitor's pick when
+     it's one of the extra voices), and a "More" chip. More swaps the transcript and the footer for a list of
+     every voice the tenant offers, each with a Play button for its recorded greeting (a static MP3 on the
+     API's origin: no call, no cost, no visitor limit used); Done or Escape swaps back. The panel keeps its
+     height. The list is the tenant's manifest, <api>/demo-voice/<tenant>/voices.json, which aeriox-site
+     writes from the same tenant config /api/demo-voice-session checks a voice against
+     (scripts/demo-voice-manifest.ts). Until it loads, or when it can't, the panel offers the page's own
+     voices and no More chip: the panel as it was. */
+  function loadVoiceManifest(api, tenant) {
+    return new Promise(function (resolve) {
+      var done = false, ctl = null, timer = null;
+      function finish(m) { if (!done) { done = true; clearTimeout(timer); resolve(m); } }
+      if (!window.fetch) return finish(null);
+      try { ctl = new AbortController(); } catch (e) { ctl = null; }
+      timer = setTimeout(function () { if (ctl) ctl.abort(); finish(null); }, 4000);
+      fetch(api + '/demo-voice/' + tenant + '/voices.json', { mode: 'cors', credentials: 'omit', signal: ctl ? ctl.signal : undefined })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (m) { finish(voiceManifest(m, tenant)); }, function () { finish(null); });
+    });
+  }
+  /* A manifest the picker can use, or null: version 1, this tenant, xAI-style ids, the default among them. */
+  function voiceManifest(m, tenant) {
+    if (!m || m.v !== 1 || m.tenant !== tenant || !Array.isArray(m.voices) || !m.voices.length) return null;
+    var seen = Object.create(null), voices = [];
+    for (var i = 0; i < m.voices.length; i++) {
+      var v = m.voices[i];
+      if (!v || typeof v.id !== 'string' || !/^[a-z]+$/.test(v.id) || seen[v.id] || typeof v.name !== 'string' || !v.name) return null;
+      seen[v.id] = true;
+      voices.push({ id: v.id, name: v.name, gender: v.gender === 'female' || v.gender === 'male' ? v.gender : '', tone: typeof v.tone === 'string' ? v.tone : '' });
+    }
+    if (typeof m.defaultVoice !== 'string' || !seen[m.defaultVoice]) return null;
+    return { defaultVoice: m.defaultVoice, shown: (Array.isArray(m.shown) ? m.shown : []).filter(function (id) { return seen[id] === true; }), voices: voices };
+  }
+  /* o: panel, fieldset (.vd-voices: its legend and the hint), hint, swap (what the list stands in for),
+     mountAfter (the panel's header), api, tenant, storageKey, fallback ([{id, name, gender, tone}] or
+     [{id, name, hint}]: the page's own voices), lang ('en' | 'es'), announce(text), manifest (a promise). */
+  function voicePicker(o) {
+    var panel = o.panel, fieldset = o.fieldset, hintEl = o.hint, swap = (o.swap || []).filter(Boolean);
+    var voices = [], shown = [], defaultVoice = '', pickedId = '', touched = false, locked = false, pending = null;
+    var view = null, list = null, more = null, rows = {}, audio = null, playing = null, compact = [];
+    var lang = o.lang === 'es' ? 'es' : 'en';
+    var ICON_PLAY = '<svg class="vd-pi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 4.8v14.4a.8.8 0 0 0 1.2.7l11.3-7.2a.8.8 0 0 0 0-1.4L8.7 4.1a.8.8 0 0 0-1.2.7z"/></svg>';
+    var ICON_STOP = '<svg class="vd-pi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
+
+    function h(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function all(sel, el) { return Array.prototype.slice.call((el || fieldset).querySelectorAll(sel)); }
+    function byId(id) { for (var i = 0; i < voices.length; i++) if (voices[i].id === id) return voices[i]; return null; }
+    /* "Female voice · warm, friendly" under the chips (long), "Female · warm, friendly" in the list */
+    function hintOf(v, long) {
+      if (!v) return '';
+      if (!v.gender && !v.tone) return long ? v.hint || '' : (v.hint || '').replace(/^(Female|Male) voice\b/, '$1');
+      var g = v.gender === 'female' ? 'Female' : v.gender === 'male' ? 'Male' : '';
+      var t = v.tone ? v.tone.charAt(0).toLowerCase() + v.tone.slice(1) : '';
+      return [g && long ? g + ' voice' : g, t].filter(Boolean).join(' · ');
+    }
+    /* "Iris, female voice, friendly, upbeat" */
+    function spoken(v) { var x = hintOf(v, true); return v.name + (x ? ', ' + x.replace(/ · /g, ', ').toLowerCase() : ''); }
+    function saved() { try { return localStorage.getItem(o.storageKey); } catch (e) { return null; } }
+    function save(id) { try { localStorage.setItem(o.storageKey, id); } catch (e) { /* storage blocked: this page only */ } }
+
+    /* ---- the voices ---- */
+    function setVoices(list, def, show) {
+      voices = list.map(function (v) { return { id: v.id, name: v.name, gender: v.gender || '', tone: v.tone || '', hint: v.hint || '' }; });
+      defaultVoice = byId(def) ? def : voices[0].id;
+      shown = [defaultVoice];
+      (show || []).concat(voices.map(function (v) { return v.id; })).forEach(function (id) {
+        if (shown.length < 2 && byId(id) && shown.indexOf(id) < 0) shown.push(id);
+      });
+    }
+    function use(m) {
+      setVoices(m.voices, m.defaultVoice, m.shown);
+      /* a pick made before the list arrived stands; else the saved one; else the default. A saved voice
+         this list doesn't offer is ignored, not erased: it comes back when a list that has it loads. */
+      if (!touched || !byId(pickedId)) { var s = saved(); pickedId = byId(s) ? s : defaultVoice; }
+      renderList();
+      renderChips();
+    }
+    function load(m) {
+      if (!m || !m.voices || !m.voices.length) return;
+      if (locked || isOpen()) pending = m; /* never under a call, or under the visitor's eyes in the list */
+      else use(m);
+    }
+
+    /* ---- the default view: two chips and More ---- */
+    function renderChips() {
+      /* the second chip: the picked voice when it's an extra one, else the second shown voice. Fixed until
+         the next render (the list closing, or the manifest arriving), so a chip never vanishes under a tap. */
+      var slot = shown.indexOf(pickedId) >= 0 ? shown[1] : pickedId;
+      var ids = [shown[0], slot].filter(function (id, i, a) { return id && a.indexOf(id) === i; });
+      all('.vd-chip, .vd-more').forEach(function (n) { n.parentNode.removeChild(n); });
+      var html = ids.map(function (id) {
+        var v = byId(id);
+        return '<label class="vd-chip"><input type="radio" name="vd-voice" value="' + h(id) + '"' + (id === pickedId ? ' checked' : '') +
+          (locked ? ' disabled' : '') + ' aria-label="' + h(spoken(v)) + '"><span>' + h(v.name) + '</span></label>';
+      }).join('');
+      var extra = voices.length - ids.length;
+      if (extra > 0 && view) {
+        html += '<button class="vd-more" type="button" aria-expanded="false" aria-controls="vd-vview" aria-label="More voices, ' + extra +
+          ' more to try"' + (locked ? ' disabled' : '') + '><span>More</span></button>';
+      }
+      hintEl.insertAdjacentHTML('beforebegin', html);
+      all('.vd-chip input').forEach(function (i) { i.addEventListener('change', function () { pick(i.value); }); });
+      more = fieldset.querySelector('.vd-more');
+      if (more) more.addEventListener('click', openList);
+      hintEl.textContent = hintOf(byId(pickedId), true);
+      fit();
+    }
+    /* one line, always: when the chips and More would wrap, the "Voice" legend leaves the row visually
+       (is-tight) and still names the group for screen readers */
+    function fit() {
+      fieldset.classList.remove('is-tight');
+      var c = all('.vd-chip, .vd-more');
+      if (c.length > 1 && c[c.length - 1].offsetTop > c[0].offsetTop + 4) fieldset.classList.add('is-tight');
+    }
+    if (window.ResizeObserver) new ResizeObserver(function () { fit(); }).observe(fieldset);
+    function pick(id) {
+      if (!byId(id)) return;
+      pickedId = id; touched = true; save(id);
+      hintEl.textContent = hintOf(byId(id), true);
+      all('input[name="vd-voice"]').forEach(function (i) { i.checked = i.value === id; });
+      if (list) all('input', list).forEach(function (i) { i.checked = i.value === id; });
+    }
+
+    /* ---- the list ---- */
+    function renderList() {
+      stop();
+      if (view && view.parentNode) view.parentNode.removeChild(view);
+      view = list = null; rows = {};
+      if (voices.length <= 2) return;
+      view = document.createElement('div');
+      view.className = 'vd-vview'; view.id = 'vd-vview'; view.hidden = true;
+      view.innerHTML =
+        '<div class="vd-vhead"><div class="vd-vtitles"><h3 class="vd-vtitle" id="vd-vtitle">Choose a voice</h3>' +
+          '<p class="vd-vsub">Press play to hear each one.</p></div>' +
+          '<button class="vd-done" type="button">Done</button></div>' +
+        '<div class="vd-vlist" role="radiogroup" aria-labelledby="vd-vtitle">' + voices.map(function (v) {
+          return '<div class="vd-vrow" data-voice="' + h(v.id) + '">' +
+            '<label class="vd-vpick"><input type="radio" name="vd-voice-all" value="' + h(v.id) + '"' + (v.id === pickedId ? ' checked' : '') +
+              ' aria-label="' + h(spoken(v)) + '"><span class="vd-vdot" aria-hidden="true"></span>' +
+              '<span class="vd-vname" aria-hidden="true">' + h(v.name) + '</span><span class="vd-vhint" aria-hidden="true">' + h(hintOf(v)) + '</span></label>' +
+            '<button class="vd-play" type="button" data-state="idle" aria-label="Play sample: ' + h(v.name) + '">' + ICON_PLAY + '</button></div>';
+        }).join('') + '</div>' +
+        '<div class="vd-vfoot"><span class="vd-vlang-l" id="vd-vlang">Samples in</span>' +
+          '<div class="vd-seg" role="radiogroup" aria-labelledby="vd-vlang">' +
+            '<label><input type="radio" name="vd-vlang" value="en"' + (lang === 'en' ? ' checked' : '') + '><span>English</span></label>' +
+            '<label lang="es"><input type="radio" name="vd-vlang" value="es"' + (lang === 'es' ? ' checked' : '') + '><span>Español</span></label>' +
+          '</div></div>';
+      var after = o.mountAfter;
+      after.parentNode.insertBefore(view, after.nextSibling);
+      list = view.querySelector('.vd-vlist');
+      all('.vd-vrow', view).forEach(function (r) {
+        var id = r.getAttribute('data-voice');
+        rows[id] = r;
+        r.querySelector('input').addEventListener('change', function () { pick(id); });
+        r.querySelector('.vd-play').addEventListener('click', function () { play(id); });
+      });
+      all('.vd-seg input', view).forEach(function (i) { i.addEventListener('change', function () { stop(); lang = i.value; }); });
+      view.querySelector('.vd-done').addEventListener('click', function () { closeList(true); });
+      view.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); closeList(true); } });
+      list.addEventListener('scroll', fade, { passive: true });
+    }
+    function fade() { if (list) list.classList.toggle('is-end', list.scrollTop + list.clientHeight >= list.scrollHeight - 2); }
+    function isOpen() { return !!(view && !view.hidden); }
+    function openList() {
+      if (locked || !view || isOpen()) return;
+      var height = panel.getBoundingClientRect().height;
+      panel.scrollTop = 0;
+      panel.style.height = height + 'px'; /* the same box: the list scrolls inside it */
+      panel.classList.remove('vd-back');
+      swap.forEach(function (e) { e.hidden = true; });
+      view.hidden = false;
+      if (more) more.setAttribute('aria-expanded', 'true');
+      /* a short panel (a phone on its side): grow it, up to its own max-height, until about 2.5 rows show */
+      var short = 144 - list.clientHeight;
+      if (short > 0) {
+        var max = parseFloat(getComputedStyle(panel).maxHeight);
+        var cap = Math.min(isFinite(max) ? max : Infinity, window.innerHeight - 24);
+        panel.style.height = Math.max(height, Math.min(cap, height + short)) + 'px';
+      }
+      /* still short (the panel is at its max-height): until the list closes, the panel's header steps
+         aside and the language switch moves up beside Done, so the list gets their room */
+      if (list.clientHeight < 144) {
+        var head = view.querySelector('.vd-vhead');
+        compact = [o.mountAfter, view.querySelector('.vd-vtitles'), view.querySelector('.vd-vfoot')];
+        compact.forEach(function (e) { e.hidden = true; });
+        head.insertBefore(view.querySelector('.vd-seg'), head.querySelector('.vd-done'));
+        head.style.justifyContent = 'space-between';
+      }
+      var r = rows[pickedId] || rows[voices[0].id], input = r.querySelector('input');
+      input.checked = true;
+      list.scrollTop = Math.max(0, r.offsetTop - (list.clientHeight - r.offsetHeight) / 2);
+      fade();
+      try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+    }
+    function closeList(returnFocus) {
+      if (!isOpen()) return;
+      stop();
+      view.hidden = true;
+      swap.concat(compact).forEach(function (e) { e.hidden = false; });
+      if (compact.length) {
+        view.querySelector('.vd-vfoot').appendChild(view.querySelector('.vd-seg'));
+        view.querySelector('.vd-vhead').style.justifyContent = '';
+        compact = [];
+      }
+      panel.style.height = '';
+      panel.classList.add('vd-back');
+      if (pending && !locked) { var m = pending; pending = null; use(m); } else renderChips();
+      if (returnFocus) {
+        var f = more || fieldset.querySelector('.vd-chip input:checked');
+        if (f) f.focus();
+        if (o.announce) o.announce('Voice: ' + byId(pickedId).name + '.');
+      }
+    }
+
+    /* ---- samples: the recorded greeting, one at a time (an audio element, so a phone on silent still plays it) ---- */
+    function sampleUrl(id) { return o.api + '/demo-voice/' + o.tenant + '/greetings/' + id + '-' + lang + '.mp3'; }
+    function setRow(id, st) {
+      var r = rows[id], v = byId(id); if (!r || !v) return;
+      var b = r.querySelector('.vd-play'), on = st === 'playing' || st === 'loading';
+      b.setAttribute('data-state', st);
+      b.setAttribute('aria-label', (on ? 'Stop sample: ' : 'Play sample: ') + v.name);
+      b.innerHTML = on ? ICON_STOP : ICON_PLAY;
+      r.classList.toggle('is-playing', st === 'playing');
+      r.classList.toggle('is-failed', st === 'failed');
+      r.querySelector('.vd-vhint').textContent = st === 'failed' ? 'The sample didn’t load. Try again.' : hintOf(v);
+      if (st !== 'playing') r.style.removeProperty('--p');
+    }
+    function stop() {
+      var id = playing; if (!id) return;
+      playing = null;
+      if (audio) { audio.pause(); audio.removeAttribute('src'); try { audio.load(); } catch (e) {} }
+      setRow(id, 'idle');
+    }
+    function failed() {
+      var id = playing; if (!id) return;
+      playing = null;
+      setRow(id, 'failed');
+      if (o.announce) o.announce('The sample of ' + byId(id).name + ' didn’t load. Try again.');
+    }
+    function play(id) {
+      if (playing === id) return stop();
+      stop();
+      if (!audio) {
+        audio = new Audio();
+        audio.preload = 'none';
+        audio.addEventListener('playing', function () { if (playing) setRow(playing, 'playing'); });
+        audio.addEventListener('timeupdate', function () {
+          if (playing && rows[playing] && audio.duration) rows[playing].style.setProperty('--p', Math.min(1, audio.currentTime / audio.duration).toFixed(3));
+        });
+        audio.addEventListener('ended', function () { var was = playing; playing = null; if (was) setRow(was, 'idle'); });
+        /* an error from a source already replaced has no audio.error by the time it arrives */
+        audio.addEventListener('error', function () { if (audio.error && audio.getAttribute('src')) failed(); });
+      }
+      playing = id;
+      setRow(id, 'loading');
+      audio.src = sampleUrl(id);
+      var p = audio.play();
+      if (p && p.catch) p.catch(function (e) { if (playing === id && !(e && e.name === 'AbortError')) failed(); });
+    }
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') stop(); });
+
+    use({ voices: o.fallback, defaultVoice: o.fallback[0].id, shown: o.fallback.map(function (v) { return v.id; }) });
+    if (o.manifest && o.manifest.then) o.manifest.then(load, function () {});
+    return {
+      /* the voice for the call */
+      picked: function () { var v = byId(pickedId) || byId(defaultVoice); return { id: v.id, name: v.name }; },
+      /* connecting or live: the chips and More are off and the list is closed */
+      lock: function (on) {
+        locked = !!on;
+        if (locked) closeList(false);
+        else if (pending && !isOpen()) { var m = pending; pending = null; use(m); return; }
+        all('.vd-chip input, .vd-more').forEach(function (n) { n.disabled = locked; });
+      },
+      /* the panel closed: back to the default view */
+      reset: function () { closeList(false); panel.classList.remove('vd-back'); },
+      isOpen: isOpen,
+      /* Escape in the panel: the list first, then the panel */
+      closeList: closeList,
+      /* the session refused the voice (invalid_voice, with the voices it offers): keep only those, take the
+         default and save it; returns the default's name */
+      refuse: function (ids) {
+        if (pending) { var m = pending; pending = null; setVoices(m.voices, m.defaultVoice, m.shown); }
+        var keep = Array.isArray(ids) ? voices.filter(function (v) { return ids.indexOf(v.id) >= 0; }) : [];
+        if (keep.length) setVoices(keep, defaultVoice, shown);
+        pickedId = defaultVoice; touched = true; save(defaultVoice);
+        closeList(false);
+        renderList();
+        renderChips();
+        return byId(defaultVoice).name;
+      }
+    };
+  }
+  /* /aeriox:voice-picker v1 */
+
   /* ---------------- the panel ---------------- */
-  var panel, log, statusEl, timerEl, talkBtn, talkLabel, muteBtn, resumeBtn, announceEl, closeBtn, hintEl, voiceInputs;
+  var panel, log, statusEl, timerEl, talkBtn, talkLabel, muteBtn, resumeBtn, announceEl, closeBtn, hintEl, vpick;
 
   function build() {
     panel = el('section', 'vd-panel');
@@ -78,10 +378,6 @@
     panel.setAttribute('aria-labelledby', 'vd-title');
     panel.setAttribute('aria-describedby', 'vd-fine');
     panel.setAttribute('data-state', 'idle');
-    var voices = VOICES.map(function (v, i) {
-      return '<label class="vd-chip"><input type="radio" name="vd-voice" value="' + v.id + '"' + (i === 0 ? ' checked' : '') +
-        ' aria-label="' + v.name + ', ' + v.hint.toLowerCase() + '"><span>' + v.name + '</span></label>';
-    }).join('');
     panel.innerHTML =
       '<header class="vd-head">' +
         '<span class="vd-badge" aria-hidden="true">' + svg() + '</span>' +
@@ -97,7 +393,7 @@
       '<span class="sr-only" id="vd-announce" role="status" aria-live="polite" aria-atomic="true"></span>' +
       '<div class="vd-log" id="vd-log" tabindex="0" aria-label="Call transcript"></div>' +
       '<div class="vd-foot">' +
-        '<fieldset class="vd-voices"><legend class="vd-legend">Voice</legend>' + voices +
+        '<fieldset class="vd-voices"><legend class="vd-legend">Voice</legend>' +
           '<span class="vd-hint" id="vd-hint" aria-hidden="true"></span></fieldset>' +
         /* the fine print (mic, 30 days) sits just above Talk, so it's in view whenever Talk is */
         '<p class="vd-fine" id="vd-fine">Uses your mic. AERIOX keeps no recording; the AI provider behind AERIOX agents may keep the call up to 30 days to check for abuse (<a href="https://aeriox.co/legal/privacy" target="_blank" rel="noopener">privacy</a>). Ends at 3 min. No real bookings.</p>' +
@@ -120,18 +416,13 @@
     announceEl = panel.querySelector('#vd-announce');
     closeBtn = panel.querySelector('.vd-x');
     hintEl = panel.querySelector('#vd-hint');
-    voiceInputs = Array.prototype.slice.call(panel.querySelectorAll('input[name="vd-voice"]'));
     pill.setAttribute('aria-controls', 'vd-panel');
-
-    try {
-      var saved = localStorage.getItem(VOICE_KEY);
-      if (saved) voiceInputs.forEach(function (i) { i.checked = i.value === saved; });
-      if (!voiceInputs.some(function (i) { return i.checked; })) voiceInputs[0].checked = true;
-    } catch (e) { /* storage blocked: keep the default */ }
-    voiceInputs.forEach(function (i) {
-      i.addEventListener('change', function () { showHint(); try { localStorage.setItem(VOICE_KEY, i.value); } catch (e) {} });
+    vpick = voicePicker({
+      panel: panel, fieldset: panel.querySelector('.vd-voices'), hint: hintEl,
+      swap: [log, panel.querySelector('.vd-foot')], mountAfter: panel.querySelector('.vd-head'),
+      api: API, tenant: TENANT, storageKey: VOICE_KEY, fallback: VOICES,
+      lang: /^es\b/i.test(navigator.language || '') ? 'es' : 'en', announce: announce, manifest: VOICE_MANIFEST
     });
-    showHint();
     intro();
 
     talkBtn.addEventListener('click', function () {
@@ -154,18 +445,14 @@
       if (p && p.then) p.then(function () { if (conv === c && !audioPaused(c)) { resumeBtn.hidden = true; announce('Audio resumed.'); } }, function () {});
     });
     closeBtn.addEventListener('click', function () { close(); });
-    panel.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+    panel.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      if (vpick.isOpen()) vpick.closeList(true); else close();
+    });
   }
 
-  function showHint() {
-    var on = voiceInputs.filter(function (i) { return i.checked; })[0];
-    var v = on && VOICES.filter(function (x) { return x.id === on.value; })[0];
-    if (hintEl) hintEl.textContent = v ? v.hint : '';
-  }
-  function pickedVoice() {
-    var on = voiceInputs.filter(function (i) { return i.checked; })[0];
-    return (on && VOICES.filter(function (x) { return x.id === on.value; })[0]) || VOICES[0];
-  }
+  function pickedVoice() { return vpick.picked(); }
   function intro() {
     log.innerHTML = '';
     addNote('Ask about the stone work Jupiter Granite Co. does, or book a demo showroom appointment, in English or Spanish. Nothing is booked for real.');
@@ -173,7 +460,7 @@
   function setState(s) {
     panel.setAttribute('data-state', s);
     var locked = s === 'connecting' || s === 'live';
-    voiceInputs.forEach(function (i) { i.disabled = locked; });
+    if (vpick) vpick.lock(locked);
     root.classList.toggle('is-live', locked);
   }
   function setStatus(t) { statusEl.textContent = t; }
@@ -234,6 +521,7 @@
   }
   function close(opts) {
     if (!panel || !opened) return;
+    vpick.reset();
     if (live || conv) finishLive('Call ended');
     opened = false;
     panel.classList.remove('is-in');
@@ -492,6 +780,8 @@
           err.userMessage = j && j.message;
           err.reason = j && j.reason;
           err.retryAfter = j && Number(j.retryAfter);
+          err.code = j && j.error;
+          err.voices = j && j.voices;
           var line = pass && (err.reason === 'hourly' || err.reason === 'daily') && document.getElementById('vd-owner');
           if (line) line.textContent = 'Owner pass saved · not accepted';
           throw err;
@@ -546,7 +836,19 @@
       /* the last call may still be hanging up; the server frees its slot once that's recorded */
       if (ending) { await ending; if (conv !== c) return teardown(c); }
       /* limits first: a visitor the demo can't take right now never sees a mic prompt */
-      c.cfg = await sessionWithRetry(c, voice.id, lang, c.rate);
+      try {
+        c.cfg = await sessionWithRetry(c, voice.id, lang, c.rate);
+      } catch (e) {
+        /* a voice the server doesn't offer (a list cached from before a change): keep the voices it
+           names, take the default, and start the call with it, in the same tap */
+        if (!(e && e.code === 'invalid_voice') || conv !== c) throw e;
+        var fallbackName = vpick.refuse(e.voices);
+        if (vpick.picked().id === voice.id) throw e;
+        voice = vpick.picked();
+        addNote('That voice isn’t available right now, so this call uses ' + fallbackName + '.');
+        announce('That voice isn’t available right now, so this call uses ' + fallbackName + '.');
+        c.cfg = await sessionWithRetry(c, voice.id, lang, c.rate);
+      }
       if (conv !== c) return teardown(c);
       addNote('Allow microphone access to start. Speak normally once it answers.');
       announce('Allow microphone access to start.');

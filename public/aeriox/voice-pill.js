@@ -18,7 +18,7 @@
   function load() {
     if (!loading) loading = new Promise(function (ok, fail) {
       var s = document.createElement('script');
-      s.src = '/aeriox/voice.js?v=voice-1'; s.async = true;
+      s.src = '/aeriox/voice.js?v=voice-2'; s.async = true;
       s.onload = ok; s.onerror = function () { loading = null; fail(new Error('voice.js')); };
       document.head.appendChild(s);
     });
