@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { lookConfig, type LookPreset, type LookValues } from "@/lib/look.config";
+import { holdPlace, settle } from "./keepPlace";
 
 const AXIS = ["layout", "theme", "palette", "font", "logo", "logoVariant", "nav"] as const;
 
@@ -85,11 +86,14 @@ export function Look() {
     } catch {}
   }
 
+  // A pick restyles the page where the visitor is: the line under the header holds still while the look settles (keepPlace.ts).
   function commit(next: LookValues, pid: string | null) {
+    holdPlace(".look-picker");
     setValues(next);
     setPresetId(pid);
     applyDom(next);
     persist(next, pid);
+    settle();
   }
 
   function applyPreset(p: LookPreset) {
