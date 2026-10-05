@@ -22,7 +22,7 @@
 
   var OFFER = {
     demo: 'jupiter-granite-original',
-    termsVersion: '2026-10-01-1',
+    termsVersion: '2026-10-04-1',
     /* aeriox.co in production. A local preview may point it at a dev server with ?offerApi=http://localhost:PORT. */
     api: 'https://aeriox.co',
     links: {
