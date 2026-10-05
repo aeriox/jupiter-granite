@@ -22,7 +22,7 @@
 
   var OFFER = {
     demo: 'jupiter-granite-original',
-    termsVersion: '2026-10-04-1',
+    termsVersion: '2026-10-05-1',
     /* aeriox.co in production. A local preview may point it at a dev server with ?offerApi=http://localhost:PORT. */
     api: 'https://aeriox.co',
     links: {
@@ -69,7 +69,7 @@
         '30 days free, starting the day your agent goes live.',
         'Cancel it within those 30 days and you never pay its monthly fee, and you keep your website.',
         'It answers Jupiter Granite Co.\u2019s calls 24/7, takes messages and books appointments straight into your Google Calendar.',
-        'Fair use: 500 minutes of calls a month.'
+        'Includes 500 minutes of calls a month. Past that, calls use prepaid credit at 49¢ a minute, by the second. If your credit runs out, your agent pauses new calls until you add credit or your next monthly period starts.'
       ]
     },
     /* Shown when an agent will book: the voice agent (the add-on), the chat agent (Website + booking + AI chat), or
