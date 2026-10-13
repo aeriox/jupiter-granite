@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { lookConfig, type LookPreset, type LookValues } from "@/lib/look.config";
 import { holdPlace, settle } from "./keepPlace";
 
+const HINT_KEY = "look-hint-seen";
 const AXIS = ["layout", "theme", "palette", "font", "logo", "logoVariant", "nav"] as const;
 
 function cloneValues(v: LookValues): LookValues {
@@ -51,7 +52,7 @@ export function LookThemeScript() {
 export function Look() {
   const presets = lookConfig.PRESETS;
   const [open, setOpen] = useState(false);
-  const [customize, setCustomize] = useState(false);
+  const [hint, setHint] = useState(false);
   const [values, setValues] = useState<LookValues>(() => cloneValues(lookConfig.DEFAULTS));
   const [presetId, setPresetId] = useState<string | null>(presets[0]?.id ?? null);
 
@@ -74,6 +75,28 @@ export function Look() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout> | undefined;
+    try {
+      if (!localStorage.getItem(HINT_KEY)) {
+        t = setTimeout(() => setHint(true), 1200);
+      }
+    } catch {}
+    return () => { if (t) clearTimeout(t); };
+  }, []);
+
+  useEffect(() => {
+    if (!hint) return;
+    const t = setTimeout(() => setHint(false), 9000);
+    return () => clearTimeout(t);
+  }, [hint]);
+
+  function toggle() {
+    setOpen((o) => !o);
+    setHint(false);
+    try { localStorage.setItem(HINT_KEY, "1"); } catch {}
+  }
 
   useEffect(() => {
     document.documentElement.dataset.pickerOpen = open ? "1" : "0";
@@ -118,10 +141,10 @@ export function Look() {
   return (
     <div className={`look-picker pointer-events-none fixed bottom-5 right-5 z-[80] flex flex-col items-end gap-3 max-md:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))] ${open ? "is-open" : ""}`}>
       {open && (
-        <div className="look-panel pointer-events-auto w-[19rem] max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-2xl shadow-black/20">
-          <div className="no-bar max-h-[min(70vh,calc(100dvh-5.5rem))] overflow-y-auto rounded-[calc(1rem-0.375rem)] bg-bg p-4">
+        <div className="look-panel pointer-events-auto w-[22rem] max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border border-line bg-surface p-1.5 shadow-2xl shadow-black/20">
+          <div className="no-bar max-h-[min(75vh,calc(100dvh-9rem))] overscroll-contain overflow-y-auto rounded-[calc(1rem-0.375rem)] bg-bg p-4">
             <div className="look-head flex items-center gap-2">
-              <span className="eyebrow text-accent">Look</span>
+              <span className="eyebrow text-accent">Change the look</span>
               <span className="text-[0.7rem] text-faint">{status}</span>
               {!presetId && <span className="ml-auto text-[0.65rem] uppercase tracking-wider text-faint">Custom</span>}
               <button type="button" aria-label="Close" className="ml-auto text-faint hover:text-fg" onClick={() => setOpen(false)}>
@@ -129,7 +152,8 @@ export function Look() {
               </button>
             </div>
 
-            <div className="look-presets mt-3 grid grid-cols-3 gap-2">
+            <div className="mt-3 text-[0.72rem] font-semibold uppercase tracking-wider text-faint">Quick looks</div>
+            <div className="look-presets mt-2 grid grid-cols-3 gap-2">
               {presets.map((p) => (
                 <button
                   key={p.id}
@@ -156,18 +180,8 @@ export function Look() {
               ))}
             </div>
 
-            <button
-              type="button"
-              className="look-customize-link mt-3 text-left text-[0.78rem] underline text-fg"
-              aria-expanded={customize}
-              aria-controls="look-customize"
-              onClick={() => setCustomize((c) => !c)}
-            >
-              Customize
-            </button>
-
-            {customize && (
-              <div id="look-customize" className="look-customize mt-3 space-y-3">
+            <div className="look-customize mt-5 space-y-4 border-t border-line pt-4">
+              <div className="text-[0.72rem] font-semibold uppercase tracking-wider text-faint">Fine-tune</div>
                 {lookConfig.layouts.length >= 2 && (
                   <Axis label="Layout" options={lookConfig.layouts} value={values.layout} onPick={(id) => setAxis("layout", id)} />
                 )}
@@ -196,7 +210,6 @@ export function Look() {
                   Reset to Look 1
                 </button>
               </div>
-            )}
 
             {/* AERIOX add-on: the buy panel (public/aeriox/buy.js) takes this look with the order */}
             <button
@@ -218,14 +231,22 @@ export function Look() {
         </div>
       )}
 
+      {hint && !open && (
+        <div role="status" className="look-hint pointer-events-auto max-w-[15rem] rounded-xl bg-fg px-3 py-2 text-[0.78rem] text-bg shadow-lg shadow-black/20">
+          Tap to try a different look for this site: colours, fonts and more.
+        </div>
+      )}
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-label="Look"
+        onClick={toggle}
+        aria-label={open ? "Close look options" : "Change the look of this site"}
         aria-expanded={open}
-        className="look-toggle pointer-events-auto flex h-12 items-center justify-center rounded-full bg-fg px-4 text-[0.8rem] max-md:h-10 max-md:px-3.5 max-md:text-[0.75rem] font-medium text-bg shadow-lg shadow-black/20"
+        className={`look-toggle pointer-events-auto flex h-12 items-center gap-2 rounded-full bg-accent pl-3.5 pr-5 text-[0.9rem] font-semibold text-black shadow-xl shadow-black/30 ring-2 ring-white/70 ring-offset-2 ring-offset-black/10 transition-transform duration-300 hover:scale-[1.04] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-fg max-md:h-11 max-md:pl-3 max-md:pr-4 max-md:text-[0.82rem] ${hint && !open ? "look-pulse" : ""}`}
       >
-        Look
+        <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+          {open ? <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" /> : <><circle cx="12" cy="12" r="9" /><circle cx="8.5" cy="10" r="1.3" fill="currentColor" /><circle cx="12" cy="7.5" r="1.3" fill="currentColor" /><circle cx="15.5" cy="10" r="1.3" fill="currentColor" /><path d="M12 21a2.5 2.5 0 0 1 0-5h1.5a2 2 0 0 0 2-2" strokeLinecap="round" /></>}
+        </svg>
+        <span>{open ? "Close" : "Change the look"}</span>
       </button>
     </div>
   );
@@ -245,13 +266,14 @@ function Axis({
   return (
     <div>
       <div className="eyebrow text-accent">{label}</div>
-      <div className="mt-2 flex flex-col gap-1">
+      <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label={label}>
         {options.map((o) => (
           <button
             key={o.id}
             type="button"
             onClick={() => onPick(o.id)}
-            className={`rounded-lg px-3 py-2 text-left text-[0.8rem] transition-colors ${value === o.id ? "bg-fg text-bg" : "hover:bg-fg/5"}`}
+            aria-pressed={value === o.id}
+            className={`min-h-9 rounded-full border px-3 py-1.5 text-[0.78rem] transition-colors ${value === o.id ? "border-fg bg-fg text-bg" : "border-line hover:border-fg/30 hover:bg-fg/5"}`}
           >
             {o.label}
           </button>

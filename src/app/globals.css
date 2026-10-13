@@ -321,3 +321,8 @@ body {
 }
 
 html[data-switching] *, html[data-switching] *::before, html[data-switching] *::after { transition: none !important; animation: none !important; }
+
+/* Look picker CTA: one-time pulse on first visit */
+@keyframes look-pulse { 0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 70%, transparent); } 50% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--color-accent) 0%, transparent); } }
+.look-toggle.look-pulse { animation: look-pulse 1.6s ease-out 3; }
+@media (prefers-reduced-motion: reduce) { .look-toggle.look-pulse { animation: none; } }
