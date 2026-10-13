@@ -88,18 +88,19 @@
 }
 
 [data-theme="monolith"] {
-  --color-bg: #0c0c0d;
-  --color-surface: #161617;
-  --color-surface2: #1f1f21;
-  --color-fg: #f2f0eb;
-  --color-muted: #a8a39a;
-  --color-faint: #6f6b63;
-  --color-accent: #c9a877;
-  --color-accent2: #6ea3c0;
-  --color-line: rgba(255, 255, 255, 0.1);
-  --color-dark: #060606;
-  --color-ondark: #f2f0eb;
-  --color-ondarkmuted: rgba(242, 240, 235, 0.7);
+  /* cool slate and brushed silver: distinct from Atelier's warm bronze */
+  --color-bg: #0f1316;
+  --color-surface: #171d22;
+  --color-surface2: #202830;
+  --color-fg: #eef2f5;
+  --color-muted: #a3afba;
+  --color-faint: #6b7884;
+  --color-accent: #b8c4cf;
+  --color-accent2: #8fb3c9;
+  --color-line: rgba(184, 196, 207, 0.14);
+  --color-dark: #090c0f;
+  --color-ondark: #eef2f5;
+  --color-ondarkmuted: rgba(238, 242, 245, 0.72);
   --shell: 74rem;
   --radius: 0.5rem;
   --radius-sm: 0.375rem;
@@ -132,11 +133,13 @@
   --color-dark: #070605; --color-ondark: #f3efe9; --color-ondarkmuted: rgba(243, 239, 233, 0.7);
 }
 [data-theme="monolith"][data-mode="light"] {
-  --color-bg: #f3f2ef; --color-surface: #ffffff; --color-surface2: #e7e5e0;
-  --color-fg: #16161a; --color-muted: #54535a; --color-faint: #8a8992;
-  --color-accent: #9c7a33; --color-accent2: #2f6f8f; --color-line: rgba(20, 20, 25, 0.12);
-  --color-dark: #16161a; --color-ondark: #f3f2ef; --color-ondarkmuted: rgba(243, 242, 239, 0.7);
+  --color-bg: #eef1f4; --color-surface: #ffffff; --color-surface2: #dde3e9;
+  --color-fg: #141a20; --color-muted: #4b5763; --color-faint: #7d8893;
+  --color-accent: #46525e; --color-accent2: #2f6f8f; --color-line: rgba(20, 26, 32, 0.12);
+  --color-dark: #1a2129; --color-ondark: #eef1f4; --color-ondarkmuted: rgba(238, 241, 244, 0.72);
 }
+/* Monolith dark's silver accent is light: text on it goes dark (AA). */
+[data-theme="monolith"]:not([data-mode="light"]) .bg-accent { color: #0f1316; }
 
 /* ---------------- Font pairings ---------------- */
 
@@ -326,3 +329,4 @@ html[data-switching] *, html[data-switching] *::before, html[data-switching] *::
 @keyframes look-pulse { 0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 70%, transparent); } 50% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--color-accent) 0%, transparent); } }
 .look-toggle.look-pulse { animation: look-pulse 1.6s ease-out 3; }
 @media (prefers-reduced-motion: reduce) { .look-toggle.look-pulse { animation: none; } }
+[data-theme="monolith"][data-mode="light"] .look-toggle { color: #fff; }
