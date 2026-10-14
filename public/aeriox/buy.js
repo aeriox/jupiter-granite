@@ -22,7 +22,7 @@
 
   var OFFER = {
     demo: 'jupiter-granite-original',
-    termsVersion: '2026-10-05-1',
+    termsVersion: '2026-10-13-2',
     /* aeriox.co in production. A local preview may point it at a dev server with ?offerApi=http://localhost:PORT. */
     api: 'https://aeriox.co',
     links: {
@@ -31,7 +31,7 @@
       call: 'https://app.aeriox.co/b/aeriox'
     },
     /* USD. {name} in the text below is replaced with these, formatted as money. */
-    prices: { site: 750, site_booking: 999, hosting: 20, voice: 150 },
+    prices: { site: 500, site_booking: 750, hosting: 20, voice: 150 },
     ribbon: {
       lead: 'From {site} one time',
       rest: 'Hosting is free for the first year, then {hosting} a month.',
