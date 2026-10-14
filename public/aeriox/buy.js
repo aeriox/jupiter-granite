@@ -376,6 +376,19 @@
             '<div class="buy-cards" role="radiogroup" aria-labelledby="buy-h-plan" aria-describedby="buy-err-plan">' + plans + '</div>' +
             '<p class="buy-err" id="buy-err-plan" hidden>' + esc(m.pickPlan) + '</p>' +
             '<div id="buy-addon-slot"></div>' +
+            /* Add AI voice (Joshua, 2026-10-14): the voice plans, each its own $0-today order on aeriox.co/voice. A plan
+               order carries no site (offer_acceptances keeps the two apart), so it opens there in a new tab. */
+            '<div class="buy-voiceplans" style="margin:18px 0 4px">' +
+              '<p class="buy-addon-h">Add AI voice</p>' +
+              '<p style="margin:4px 0 10px;font-size:.88rem;opacity:.8">An AI agent answers your calls 24/7 and books jobs. $0 today, 30 days free once live, then monthly. Its own quick checkout.</p>' +
+              '<ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">' +
+              [['voice_starter','Starter','$99','300'],['voice_solo','Solo','$199','750'],['voice_crew','Crew','$299','1,200'],['voice_company','Company','$499','2,500']].map(function (v) {
+                return '<li><a href="https://aeriox.co/voice?plan=' + v[0] + '#plan-order" target="_blank" rel="noopener" data-voice-plan="' + v[0] + '" style="display:block;padding:10px 12px;border:1px solid currentColor;border-radius:10px;text-decoration:none;color:inherit">' +
+                  '<strong>Get ' + v[1] + '</strong> &middot; ' + v[2] + '/mo<br><small style="opacity:.75">' + v[3] + ' minutes a month</small>' + SR_NEWTAB + '</a></li>';
+              }).join('') +
+              '</ul>' +
+              '<p style="margin:8px 0 0;font-size:.8rem;opacity:.7">Past your minutes, 49&cent; a minute. Month to month, cancel anytime.</p>' +
+            '</div>' +
           '</div>' +
           '<div class="buy-step" id="buy-step-square" hidden>' +
             '<h3 class="buy-step-h"><span class="buy-n">02</span>' + esc(sq.step) + '</h3>' +
