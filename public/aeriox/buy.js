@@ -384,7 +384,7 @@
               '<ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">' +
               [['voice_starter','Starter','$99','300'],['voice_solo','Solo','$199','750'],['voice_crew','Crew','$299','1,200'],['voice_company','Company','$499','2,500']].map(function (v) {
                 return '<li><a href="https://aeriox.co/voice?plan=' + v[0] + '#plan-order" data-voice-plan="' + v[0] + '" style="display:block;padding:10px 12px;border:1px solid currentColor;border-radius:10px;text-decoration:none;color:inherit">' +
-                  '<strong>Get ' + v[1] + '</strong> &middot; ' + v[2] + '/mo<br><small style="opacity:.75">' + v[3] + ' minutes a month</small>' + SR_NEWTAB + '</a></li>';
+                  '<strong>Get ' + v[1] + '</strong> &middot; ' + v[2] + '/mo<br><small style="opacity:.75">' + v[3] + ' minutes a month</small></a></li>';
               }).join('') +
               '</ul>' +
               '<p style="margin:8px 0 0;font-size:.8rem;opacity:.7">Past your minutes, 49&cent; a minute. Month to month, cancel anytime.</p>' +
